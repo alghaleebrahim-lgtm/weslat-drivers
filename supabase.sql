@@ -58,3 +58,10 @@ create policy "public can upload driver docs"
   on storage.objects
   for insert to anon
   with check (bucket_id = 'driver-docs');
+
+-- رفع الصور يحتاج قراءة الملف بعد رفعه مباشرة؛ نسمح بذلك لدقيقتين فقط بعد الرفع
+drop policy if exists "anon read fresh driver docs" on storage.objects;
+create policy "anon read fresh driver docs"
+  on storage.objects
+  for select to anon
+  using (bucket_id = 'driver-docs' and created_at > now() - interval '2 minutes');

@@ -414,6 +414,9 @@ const sb = (window.supabase && SUPABASE_ANON_KEY.length > 20)
 
 async function upload(file, folder) {
   if (!file) return null;
+  try { return await doUpload(file, folder); } catch (e) { console.warn("upload failed", e); return null; }
+}
+async function doUpload(file, folder) {
   const ext = (file.name.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "");
   const path = `${folder}/${crypto.randomUUID()}.${ext}`;
   const { error } = await sb.storage.from(BUCKET).upload(path, file, { contentType: file.type });
