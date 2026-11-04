@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>تسجيل السائقين والعربات – وصلت</title>
-<meta name="description" content="سجّل عربتك واشتغل مع وصلت في النقل داخل المدن وبين الولايات.">
+<title>تسجيل السائقين والمركبات – وصلت</title>
+<meta name="description" content="سجّل مركبتك واعمل مع وصلت في النقل داخل المدن وبين الولايات.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
@@ -115,9 +115,9 @@
   <div class="card">
     <div class="intro">
       <div class="logo"><img src="logo.png" alt="شعار وصلت"></div>
-      <h1>تسجيل السائقين والعربات</h1>
-      <p>عندك عربة وداير تشتغل في النقل داخل المدن أو بين الولايات؟ سجّل بياناتك، وفريق وصلت بيتواصل معاك.</p>
-      <span class="tag">التسجيل بياخد أقل من 3 دقائق</span>
+      <h1>تسجيل السائقين والمركبات</h1>
+      <p>هل تملك مركبة وترغب في العمل معنا في النقل داخل المدن أو بين الولايات؟ سجّل بياناتك وسيتواصل معك فريق وصلت.</p>
+      <span class="tag">يستغرق التسجيل أقل من 3 دقائق</span>
     </div>
     <form id="form" novalidate>
       <div id="steps-ui">
@@ -134,18 +134,18 @@
         <div class="field">
           <label class="q" for="full_name">الاسم الكامل<span class="req">*</span></label>
           <input type="text" id="full_name" name="full_name" required autocomplete="name">
-          <div class="err">اكتب الاسم الكامل</div>
+          <div class="err">يرجى إدخال الاسم الكامل</div>
         </div>
         <div class="row">
           <div class="field">
             <label class="q" for="phone">رقم الهاتف<span class="req">*</span></label>
             <input type="tel" id="phone" name="phone" required inputmode="tel" placeholder="0912345678" data-phone>
-            <div class="err">اكتب رقم صحيح (10 أرقام يبدأ بـ 0)</div>
+            <div class="err">يرجى إدخال رقم صحيح (10 أرقام يبدأ بـ 0)</div>
           </div>
           <div class="field">
-            <label class="q" for="whatsapp">رقم الواتساب <span class="opt">(لو مختلف)</span></label>
+            <label class="q" for="whatsapp">رقم الواتساب <span class="opt">(إن كان مختلفاً)</span></label>
             <input type="tel" id="whatsapp" name="whatsapp" inputmode="tel" placeholder="0912345678" data-phone-opt>
-            <div class="err">اكتب رقم صحيح</div>
+            <div class="err">يرجى إدخال رقم صحيح</div>
           </div>
         </div>
         <div class="row">
@@ -157,7 +157,7 @@
           <div class="field">
             <label class="q" for="residence_area">الحي / المنطقة<span class="req">*</span></label>
             <input type="text" id="residence_area" name="residence_area" required>
-            <div class="err">اكتب الحي</div>
+            <div class="err">يرجى إدخال الحي</div>
           </div>
         </div>
         <div class="field">
@@ -170,31 +170,31 @@
           <div class="err">اختر نوع الرخصة</div>
         </div>
         <div class="field">
-          <label class="q" for="experience_years">سنوات الخبرة في السواقة <span class="opt">(اختياري)</span></label>
+          <label class="q" for="experience_years">سنوات الخبرة في القيادة <span class="opt">(اختياري)</span></label>
           <input type="number" id="experience_years" name="experience_years" min="0" max="60" inputmode="numeric">
         </div>
       </section>
 
       <!-- STEP 2 -->
       <section class="step" data-step="2">
-        <h2>بيانات العربة</h2>
+        <h2>بيانات المركبة</h2>
         <div class="field">
-          <label class="q">نوع العربة<span class="req">*</span></label>
+          <label class="q">نوع المركبة<span class="req">*</span></label>
           <div class="chips" data-radio="vehicle_type" data-required>
             <label class="chip"><input type="radio" name="vehicle_type" value="حافلة (هايس)"><span>حافلة (هايس)</span></label>
-            <label class="chip"><input type="radio" name="vehicle_type" value="بوكس"><span>بوكس</span></label>
-            <label class="chip"><input type="radio" name="vehicle_type" value="شريحة (دينا – إيسوزو)"><span>شريحة (دينا – إيسوزو)</span></label>
-            <label class="chip"><input type="radio" name="vehicle_type" value="دفار 10 طن"><span>دفار 10 طن</span></label>
-            <label class="chip"><input type="radio" name="vehicle_type" value="تريلا"><span>تريلا</span></label>
+            <label class="chip"><input type="radio" name="vehicle_type" value="بيك أب"><span>بيك أب</span></label>
+            <label class="chip"><input type="radio" name="vehicle_type" value="شاحنة متوسطة (دينا – إيسوزو)"><span>شاحنة متوسطة (دينا – إيسوزو)</span></label>
+            <label class="chip"><input type="radio" name="vehicle_type" value="شاحنة كبيرة (10 أطنان)"><span>شاحنة كبيرة (10 أطنان)</span></label>
+            <label class="chip"><input type="radio" name="vehicle_type" value="شاحنة بمقطورة"><span>شاحنة بمقطورة</span></label>
             <label class="chip"><input type="radio" name="vehicle_type" value="أخرى"><span>أخرى</span></label>
           </div>
-          <div class="err">اختر نوع العربة</div>
+          <div class="err">اختر نوع المركبة</div>
         </div>
         <div class="row">
           <div class="field">
             <label class="q" for="vehicle_model">الماركة والموديل<span class="req">*</span></label>
             <input type="text" id="vehicle_model" name="vehicle_model" required placeholder="مثلاً: إيسوزو NPR">
-            <div class="err">اكتب الماركة والموديل</div>
+            <div class="err">يرجى إدخال الماركة والموديل</div>
           </div>
           <div class="field">
             <label class="q" for="vehicle_year">سنة الصنع <span class="opt">(اختياري)</span></label>
@@ -205,34 +205,34 @@
           <div class="field">
             <label class="q" for="capacity_tons">الحمولة بالطن<span class="req">*</span></label>
             <input type="number" id="capacity_tons" name="capacity_tons" required min="0.1" max="80" step="0.1" inputmode="decimal">
-            <div class="err">اكتب الحمولة</div>
+            <div class="err">يرجى إدخال الحمولة</div>
           </div>
           <div class="field">
             <label class="q" for="plate_number">رقم اللوحة<span class="req">*</span></label>
             <input type="text" id="plate_number" name="plate_number" required>
-            <div class="err">اكتب رقم اللوحة</div>
+            <div class="err">يرجى إدخال رقم اللوحة</div>
           </div>
         </div>
         <div class="field">
-          <label class="q">العربة مغطاة؟<span class="req">*</span></label>
+          <label class="q">هل المركبة مغطاة؟<span class="req">*</span></label>
           <div class="chips" data-radio="cover_type" data-required>
-            <label class="chip"><input type="radio" name="cover_type" value="مقفولة"><span>مقفولة</span></label>
-            <label class="chip"><input type="radio" name="cover_type" value="بمشمع"><span>بمشمع</span></label>
+            <label class="chip"><input type="radio" name="cover_type" value="مغلقة"><span>مغلقة</span></label>
+            <label class="chip"><input type="radio" name="cover_type" value="مغطاة بمشمع"><span>مغطاة بمشمع</span></label>
             <label class="chip"><input type="radio" name="cover_type" value="مكشوفة"><span>مكشوفة</span></label>
           </div>
-          <div class="err">اختر واحد</div>
+          <div class="err">يرجى اختيار إجابة</div>
         </div>
         <div class="field">
-          <label class="q">العربة ملك منو؟<span class="req">*</span></label>
+          <label class="q">ملكية المركبة<span class="req">*</span></label>
           <div class="chips" data-radio="ownership" data-required>
-            <label class="chip"><input type="radio" name="ownership" value="ملكي"><span>ملكي</span></label>
-            <label class="chip"><input type="radio" name="ownership" value="بشتغل فيها لزول تاني"><span>بشتغل فيها لزول تاني</span></label>
+            <label class="chip"><input type="radio" name="ownership" value="ملك للسائق"><span>ملك للسائق</span></label>
+            <label class="chip"><input type="radio" name="ownership" value="ملك لشخص آخر"><span>ملك لشخص آخر</span></label>
           </div>
-          <div class="err">اختر واحد</div>
+          <div class="err">يرجى اختيار إجابة</div>
         </div>
         <div class="row">
           <div class="field">
-            <label class="q">صورة العربة <span class="opt">(اختياري)</span></label>
+            <label class="q">صورة المركبة <span class="opt">(اختياري)</span></label>
             <label class="file"><input type="file" name="vehicle_photo" accept="image/*">
               <span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#002EB0" stroke-width="2"><path d="M3 7h3l2-3h8l2 3h3v13H3z"/><circle cx="12" cy="13" r="4"/></svg></span>
               <span class="name">اختر صورة</span></label>
@@ -248,32 +248,32 @@
 
       <!-- STEP 3 -->
       <section class="step" data-step="3">
-        <h2>الشغل والأسعار</h2>
+        <h2>العمل والأسعار</h2>
         <div class="field">
-          <label class="q">نوع الشغل<span class="req">*</span></label>
+          <label class="q">نطاق العمل<span class="req">*</span></label>
           <div class="chips" data-radio="work_scope" data-required>
             <label class="chip"><input type="radio" name="work_scope" value="داخل المدينة"><span>داخل المدينة</span></label>
             <label class="chip"><input type="radio" name="work_scope" value="بين الولايات"><span>بين الولايات</span></label>
-            <label class="chip"><input type="radio" name="work_scope" value="الاتنين"><span>الاتنين</span></label>
+            <label class="chip"><input type="radio" name="work_scope" value="كلاهما"><span>كلاهما</span></label>
           </div>
-          <div class="err">اختر نوع الشغل</div>
+          <div class="err">اختر نطاق العمل</div>
         </div>
         <div class="field">
-          <label class="q">الخط البتشتغل فيه عادةً<span class="req">*</span></label>
+          <label class="q">الخط الذي تعمل عليه عادةً<span class="req">*</span></label>
           <div class="row">
             <select id="route_from" name="route_from" required data-cities><option value="">من</option></select>
             <select id="route_to" name="route_to" required data-cities><option value="">إلى</option></select>
           </div>
-          <div class="err">اختر بداية ونهاية الخط</div>
+          <div class="err">اختر بداية الخط ونهايته</div>
         </div>
         <div class="field">
-          <label class="q" for="other_routes">خطوط تانية <span class="opt">(اختياري)</span></label>
+          <label class="q" for="other_routes">خطوط أخرى <span class="opt">(اختياري)</span></label>
           <input type="text" id="other_routes" name="other_routes" placeholder="مثلاً: مدني – كسلا، عطبرة – بورتسودان">
         </div>
         <div class="field">
-          <label class="q">المدن البتقدر تتحرك ليها<span class="req">*</span></label>
+          <label class="q">المدن التي يمكنك التحرك إليها<span class="req">*</span></label>
           <div class="chips" id="cities-chips" data-check="cities" data-required></div>
-          <div class="err">اختر مدينة واحدة على الأقل</div>
+          <div class="err">يرجى اختيار مدينة واحدة على الأقل</div>
         </div>
         <div class="row">
           <div class="field">
@@ -281,18 +281,18 @@
             <select id="availability" name="availability"><option value="">اختر</option><option>كل الأيام</option><option>أيام محددة</option></select>
           </div>
           <div class="field">
-            <label class="q" for="pricing_method">طريقة الحساب<span class="req">*</span></label>
-            <select id="pricing_method" name="pricing_method" required><option value="">اختر</option><option>بالمشوار</option><option>باليوم</option><option>بالطن</option></select>
-            <div class="err">اختر طريقة الحساب</div>
+            <label class="q" for="pricing_method">طريقة احتساب الأجرة<span class="req">*</span></label>
+            <select id="pricing_method" name="pricing_method" required><option value="">اختر</option><option>بالرحلة</option><option>باليوم</option><option>بالطن</option></select>
+            <div class="err">اختر طريقة احتساب الأجرة</div>
           </div>
         </div>
         <div class="row">
           <div class="field">
-            <label class="q" for="approx_price">سعر مشوار تقريبي داخل مدينتك <span class="opt">(بالجنيه)</span></label>
+            <label class="q" for="approx_price">السعر التقريبي للرحلة داخل مدينتك <span class="opt">(بالجنيه)</span></label>
             <input type="number" id="approx_price" name="approx_price" min="0" inputmode="numeric">
           </div>
           <div class="field">
-            <label class="q" for="worked_with_companies">اشتغلت مع شركات أو منظمات قبل كده؟</label>
+            <label class="q" for="worked_with_companies">هل سبق لك العمل مع شركات أو منظمات؟</label>
             <select id="worked_with_companies" name="worked_with_companies"><option value="">اختر</option><option>نعم</option><option>لا</option></select>
           </div>
         </div>
@@ -305,15 +305,15 @@
       <div class="alert" id="alert"></div>
 
       <div class="nav" id="nav">
-        <button type="button" class="btn-ghost" id="back" hidden>رجوع</button>
+        <button type="button" class="btn-ghost" id="back" hidden>السابق</button>
         <button type="button" class="btn-primary" id="next">التالي</button>
       </div>
     </form>
 
     <div class="done" id="done" hidden>
       <div class="check"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#002EB0" stroke-width="2.5"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
-      <h2>شكراً، استلمنا بياناتك</h2>
-      <p>فريق وصلت بيراجع البيانات ويتواصل معاك قريب.</p>
+      <h2>شكراً لك، تم استلام بياناتك</h2>
+      <p>سيراجع فريق وصلت بياناتك ويتواصل معك قريباً.</p>
     </div>
   </div>
 </main>
@@ -348,7 +348,7 @@ CITIES.filter(c => c !== "أخرى").forEach(c => {
 // file name preview
 document.querySelectorAll(".file input").forEach(inp => inp.addEventListener("change", () => {
   const box = inp.closest(".file"), f = inp.files[0];
-  if (f && f.size > 8 * 1024 * 1024) { inp.value = ""; alert("حجم الصورة كبير، اختر صورة أقل من 8 ميقا"); return; }
+  if (f && f.size > 8 * 1024 * 1024) { inp.value = ""; alert("حجم الصورة كبير، يرجى اختيار صورة أقل من 8 ميغابايت"); return; }
   box.classList.toggle("has", !!f);
   box.querySelector(".name").textContent = f ? f.name : "اختر صورة";
 }));
@@ -407,10 +407,10 @@ async function upload(file, folder) {
 async function submit() {
   const fd = new FormData(form);
   if (fd.get("website")) return finish(); // bot
-  if (!sb) { showErr("الفورم لسه ما مربوط بقاعدة البيانات. راجع الإعدادات."); return; }
+  if (!sb) { showErr("النموذج غير مرتبط بقاعدة البيانات بعد."); return; }
 
   nextBtn.disabled = backBtn.disabled = true;
-  nextBtn.textContent = "جاري الإرسال...";
+  nextBtn.textContent = "جارٍ الإرسال...";
   const num = k => fd.get(k) ? Number(fd.get(k)) : null;
   const txt = k => (fd.get(k) || "").toString().trim() || null;
 
@@ -452,7 +452,7 @@ async function submit() {
     finish();
   } catch (e) {
     console.error(e);
-    showErr("حصلت مشكلة في الإرسال. اتأكد من النت وجرّب تاني.");
+    showErr("حدث خطأ أثناء الإرسال. تأكد من اتصالك بالإنترنت وحاول مرة أخرى.");
     nextBtn.disabled = backBtn.disabled = false;
     nextBtn.textContent = "إرسال البيانات";
   }
