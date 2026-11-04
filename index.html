@@ -322,8 +322,8 @@
 
 <script>
 /* ========= الإعدادات: عدّل السطرين دول فقط ========= */
-const SUPABASE_URL = "https://YOUR-PROJECT.supabase.co";
-const SUPABASE_ANON_KEY = "YOUR-ANON-KEY";
+const SUPABASE_URL = "https://fisgxnxnllplkghtsgqa.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_sW5skDrm4X5wJBgz4phBWQ_6ICaUp2B";
 /* ================================================== */
 
 const CITIES = ["الخرطوم","أم درمان","بحري","بورتسودان","عطبرة","الدامر","شندي","كسلا","حلفا الجديدة","القضارف","ود مدني","سنار","كوستي","ربك","دنقلا","مروي","أخرى"];
@@ -392,7 +392,7 @@ nextBtn.onclick = async () => {
   await submit();
 };
 
-const sb = (window.supabase && !SUPABASE_URL.includes("YOUR-PROJECT"))
+const sb = (window.supabase && SUPABASE_ANON_KEY.length > 20)
   ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
 async function upload(file, folder) {
