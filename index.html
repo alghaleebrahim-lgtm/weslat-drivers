@@ -469,7 +469,7 @@ async function submit() {
     finish();
   } catch (e) {
     console.error(e);
-    showErr("حدث خطأ أثناء الإرسال. تأكد من اتصالك بالإنترنت وحاول مرة أخرى.");
+    showErr("حدث خطأ أثناء الإرسال. تأكد من اتصالك بالإنترنت وحاول مرة أخرى." + (e && (e.message || e.code) ? " [" + (e.code || "") + " " + (e.message || "") + "]" : ""));
     nextBtn.disabled = backBtn.disabled = false;
     nextBtn.textContent = "إرسال البيانات";
   }
