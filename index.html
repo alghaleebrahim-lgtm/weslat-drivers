@@ -410,7 +410,7 @@ nextBtn.onclick = async () => {
 };
 
 const sb = (window.supabase && SUPABASE_ANON_KEY.length > 20)
-  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { persistSession: false, autoRefreshToken: false, storageKey: "weslat-form-public" } }) : null;
 
 async function upload(file, folder) {
   if (!file) return null;

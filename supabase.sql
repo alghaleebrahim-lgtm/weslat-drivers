@@ -45,8 +45,21 @@ alter table public.driver_registrations enable row level security;
 drop policy if exists "public can register" on public.driver_registrations;
 create policy "public can register"
   on public.driver_registrations
-  for insert to anon
-  with check (status = 'جديد');
+  for insert to anon, authenticated
+  with check (true);
+
+-- أي تسجيل جديد يبدأ بحالة "جديد" وبدون ملاحظات إدارية، مهما أُرسل
+create or replace function public.driver_reg_defaults()
+returns trigger language plpgsql as $$
+begin
+  new.status := 'جديد';
+  new.admin_notes := null;
+  new.created_at := now();
+  return new;
+end $$;
+drop trigger if exists driver_reg_defaults on public.driver_registrations;
+create trigger driver_reg_defaults before insert on public.driver_registrations
+  for each row execute function public.driver_reg_defaults();
 
 -- مخزن الصور (خاص – ما بيظهر للعامة)
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
