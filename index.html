@@ -71,6 +71,23 @@
   .chip input:checked+span{background:var(--blue);border-color:var(--blue);color:#fff}
   .chip input:focus-visible+span{box-shadow:0 0 0 3px rgba(0,46,176,.2)}
 
+
+  .chips.vehicles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .vcard{position:relative;display:block}
+  .vcard input{position:absolute;opacity:0;pointer-events:none}
+  .vbox{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:2px;height:100%;padding:14px 8px 12px;border:1.5px solid var(--line);border-radius:14px;background:#fff;cursor:pointer;text-align:center;transition:all .15s}
+  .vbox svg{width:72px;height:36px;margin-bottom:8px;transform:scaleX(-1);color:#8A93AE;transition:color .15s}
+  .vbox .b{fill:none;stroke:currentColor;stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+  .vbox .g{fill:currentColor;opacity:.18}
+  .vbox .w{fill:#fff;stroke:currentColor;stroke-width:2}
+  .vbox b{font-size:14.5px;font-weight:700;line-height:1.3}
+  .vbox small{font-size:12px;color:var(--muted)}
+  .vbox:hover{border-color:#AAB6D6}
+  .vcard input:checked+.vbox{border-color:var(--blue);background:#F2F5FD;box-shadow:0 0 0 3px rgba(0,46,176,.12)}
+  .vcard input:checked+.vbox svg{color:var(--blue)}
+  .vcard input:checked+.vbox .w{fill:var(--yellow)}
+  .vcard input:focus-visible+.vbox{box-shadow:0 0 0 3px rgba(0,46,176,.25)}
+  @media (max-width:520px){.chips.vehicles{grid-template-columns:repeat(2,1fr)}}
   .file{display:flex;align-items:center;gap:12px;border:1.5px dashed var(--line);border-radius:var(--radius);padding:14px;cursor:pointer;background:#FAFBFE}
   .file:hover{border-color:var(--blue)}
   .file input{display:none}
@@ -180,13 +197,13 @@
         <h2>بيانات المركبة</h2>
         <div class="field">
           <label class="q">نوع المركبة<span class="req">*</span></label>
-          <div class="chips" data-radio="vehicle_type" data-required>
-            <label class="chip"><input type="radio" name="vehicle_type" value="حافلة (هايس)"><span>حافلة (هايس)</span></label>
-            <label class="chip"><input type="radio" name="vehicle_type" value="بيك أب"><span>بيك أب</span></label>
-            <label class="chip"><input type="radio" name="vehicle_type" value="شاحنة متوسطة (دينا – إيسوزو)"><span>شاحنة متوسطة (دينا – إيسوزو)</span></label>
-            <label class="chip"><input type="radio" name="vehicle_type" value="شاحنة كبيرة (10 أطنان)"><span>شاحنة كبيرة (10 أطنان)</span></label>
-            <label class="chip"><input type="radio" name="vehicle_type" value="شاحنة بمقطورة"><span>شاحنة بمقطورة</span></label>
-            <label class="chip"><input type="radio" name="vehicle_type" value="أخرى"><span>أخرى</span></label>
+          <div class="chips vehicles" data-radio="vehicle_type" data-required>
+            <label class="vcard"><input type="radio" name="vehicle_type" value="حافلة (هايس)"><span class="vbox"><svg viewBox="0 0 64 32" aria-hidden="true"><path d="M5 25V11.5A3.5 3.5 0 0 1 8.5 8h33.5l10 8.5h4.5a3 3 0 0 1 3 3V25" class="b"/><path d="M10 12h8v5h-8zM21 12h8v5h-8zM32 12h8v5h-8zM43 12h0l5.5 4.5H43z" class="g"/><circle cx="16" cy="25" r="4.2" class="w"/><circle cx="48" cy="25" r="4.2" class="w"/></svg><b>حافلة</b><small>هايس</small></span></label>
+            <label class="vcard"><input type="radio" name="vehicle_type" value="بيك أب"><span class="vbox"><svg viewBox="0 0 64 32" aria-hidden="true"><path d="M5 25v-9h23V9h13l7 7h8a3 3 0 0 1 3 3v6" class="b"/><path d="M31 11.5h8.5l4.5 4.5H31z" class="g"/><path d="M5 16h23" class="b"/><circle cx="16" cy="25" r="4.2" class="w"/><circle cx="48" cy="25" r="4.2" class="w"/></svg><b>بيك أب</b></span></label>
+            <label class="vcard"><input type="radio" name="vehicle_type" value="شاحنة متوسطة (دينا – إيسوزو)"><span class="vbox"><svg viewBox="0 0 64 32" aria-hidden="true"><rect x="5" y="6" width="34" height="17" rx="1.5" class="b"/><path d="M42 25V11h9l7 7v7" class="b"/><path d="M44.5 13.5h5.5l4.5 4.5h-10z" class="g"/><path d="M5 25h53" class="b"/><circle cx="14" cy="25" r="4.2" class="w"/><circle cx="50" cy="25" r="4.2" class="w"/></svg><b>شاحنة متوسطة</b><small>دينا – إيسوزو</small></span></label>
+            <label class="vcard"><input type="radio" name="vehicle_type" value="شاحنة كبيرة (10 أطنان)"><span class="vbox"><svg viewBox="0 0 64 32" aria-hidden="true"><rect x="3" y="4" width="40" height="19" rx="1.5" class="b"/><path d="M45 25V9h8l7 8v8" class="b"/><path d="M47.5 11.5h4.5l5 5.5h-9.5z" class="g"/><path d="M3 25h57" class="b"/><circle cx="10" cy="25" r="4.2" class="w"/><circle cx="20" cy="25" r="4.2" class="w"/><circle cx="53" cy="25" r="4.2" class="w"/></svg><b>شاحنة كبيرة</b><small>10 أطنان</small></span></label>
+            <label class="vcard"><input type="radio" name="vehicle_type" value="شاحنة بمقطورة"><span class="vbox"><svg viewBox="0 0 64 32" aria-hidden="true"><path d="M2 21h40" class="b"/><rect x="2" y="9" width="40" height="12" rx="1" class="b"/><path d="M44 25V10h8l8 8v7" class="b"/><path d="M46.5 12.5h4.5l5.5 5.5h-10z" class="g"/><path d="M40 25h4" class="b"/><circle cx="8" cy="25" r="4.2" class="w"/><circle cx="17" cy="25" r="4.2" class="w"/><circle cx="32" cy="25" r="4.2" class="w"/><circle cx="54" cy="25" r="4.2" class="w"/></svg><b>شاحنة بمقطورة</b><small>تريلا</small></span></label>
+            <label class="vcard"><input type="radio" name="vehicle_type" value="أخرى"><span class="vbox"><svg viewBox="0 0 64 32" aria-hidden="true"><rect x="16" y="5" width="32" height="22" rx="5" class="b"/><path d="M32 11v10M27 16h10" class="b"/></svg><b>أخرى</b><small>نوع آخر</small></span></label>
           </div>
           <div class="err">اختر نوع المركبة</div>
         </div>
