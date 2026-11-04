@@ -33,3 +33,9 @@
 - البيانات: Supabase → **Table Editor → driver_registrations**. ممكن تصدّرها CSV.
 - عمود `status` (جديد / تم التواصل / مقبول / مرفوض) لمتابعة كل سائق، وعمود `admin_notes` لملاحظاتكم.
 - الصور: **Storage → driver-docs**، والمسار محفوظ في الأعمدة `vehicle_photo_path` و `license_photo_path`.
+
+## لوحة الأدمن (`/admin`)
+1. شغّل ملف `admin.sql` في SQL Editor (بعد `supabase.sql`). أي إيميل إضافي للأدمن، أضفه في الجدول `admins`.
+2. Supabase → **Authentication → Users → Add user → Create new user**: اكتب نفس الإيميل وكلمة سر، وفعّل **Auto Confirm User**.
+3. Supabase → **Authentication → Sign In / Providers**: أوقف **Allow new users to sign up**، عشان ما في زول يقدر يسجّل بنفسه.
+4. افتح `https://<رابط الموقع>/admin` وادخل بالإيميل وكلمة السر.
