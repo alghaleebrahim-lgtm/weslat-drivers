@@ -88,6 +88,7 @@
   .admin-row{display:flex;gap:8px;border-top:1px solid var(--line);padding-top:12px;flex-wrap:wrap}
   .admin-row select{flex:none}
   .admin-row textarea{flex:1;min-width:160px;min-height:38px;height:38px;resize:vertical;font-size:14px;padding:8px 10px}
+  .nophoto{font-size:13px;color:var(--muted);align-self:center;background:#F7F8FC;border-radius:8px;padding:6px 10px}
   .saved{font-size:12px;color:var(--green);align-self:center}
 
   .empty,.loading{text-align:center;color:var(--muted);padding:60px 20px;background:#fff;border-radius:16px;border:1px dashed var(--line)}
@@ -262,7 +263,7 @@ function card(r) {
   const photos = [
     r.vehicle_photo_path ? `<button class="btn btn-light btn-sm" data-photo="${esc(r.vehicle_photo_path)}">صورة المركبة</button>` : "",
     r.license_photo_path ? `<button class="btn btn-light btn-sm" data-photo="${esc(r.license_photo_path)}">صورة الرخصة</button>` : "",
-  ].join("");
+  ].join("") || `<span class="nophoto">لم تُرفع صور</span>`;
   return `
   <article class="card" data-id="${r.id}">
     <div class="card-head">
@@ -282,7 +283,7 @@ function card(r) {
       <dt>المركبة</dt><dd>${esc(r.vehicle_model)}${r.vehicle_year ? " · " + esc(r.vehicle_year) : ""} · لوحة ${esc(r.plate_number)}</dd>
       <dt>الملكية</dt><dd>${esc(r.ownership)}</dd>
       <dt>الرخصة</dt><dd>${esc(r.license_type)}${r.experience_years != null ? " · خبرة " + esc(r.experience_years) + " سنة" : ""}</dd>
-      <dt>الأجرة</dt><dd>${esc(r.pricing_method)}${r.approx_price ? " · حوالي " + Number(r.approx_price).toLocaleString("ar-EG") + " جنيه" : ""}</dd>
+      <dt>الأجرة</dt><dd>${esc(r.pricing_method)} · ${r.approx_price ? "حوالي " + Number(r.approx_price).toLocaleString("ar-EG") + " جنيه" : "السعر غير محدد"}</dd>
       ${r.other_routes ? `<dt>خطوط أخرى</dt><dd>${esc(r.other_routes)}</dd>` : ""}
       ${r.worked_with_companies ? `<dt>عمل مع شركات</dt><dd>${esc(r.worked_with_companies)}</dd>` : ""}
       ${r.availability ? `<dt>الأيام</dt><dd>${esc(r.availability)}</dd>` : ""}
