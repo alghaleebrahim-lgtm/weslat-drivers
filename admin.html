@@ -222,7 +222,7 @@ td .route b{color:var(--yellow);margin:0 8px}
   <form class="card" id="login-form">
     <img src="logo-h.png" alt="وصلت">
     <h1>تسجيل الدخول – السائقين</h1>
-    <div class="field"><label>البريد الإلكتروني</label><input type="email" id="email" required autocomplete="username" dir="ltr"></div>
+    <div class="field"><label>اسم المستخدم أو البريد</label><input type="text" id="email" required autocomplete="username" dir="ltr" autocapitalize="off" spellcheck="false"></div>
     <div class="field"><label>كلمة المرور</label><input type="password" id="password" required autocomplete="current-password"></div>
     <button class="btn btn-primary" style="width:100%;padding:12px" id="login-btn">دخول</button>
     <div class="err" id="login-err"></div>
@@ -248,6 +248,7 @@ td .route b{color:var(--yellow);margin:0 8px}
       <a href="#/requests" data-nav="requests"><svg class="i" viewBox="0 0 24 24"><path d="M4 13h4l2 3h4l2-3h4M5 13l2-7h10l2 7v6H5z"/></svg>طلبات الانضمام<span class="n" id="nav-req">0</span></a>
       <a href="#/approved" data-nav="approved"><svg class="i" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M2 20c0-3.5 3-6 7-6s7 2.5 7 6M16 11l2 2 4-4"/></svg>السائقين المعتمدين<span class="n" id="nav-app">0</span></a>
       <a href="#/add" data-nav="add"><svg class="i" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M2 20c0-3.5 3-6 7-6s7 2.5 7 6M19 8v6M16 11h6"/></svg>إضافة سائق</a>
+      <a href="#/staff" data-nav="staff" id="nav-staff" hidden><svg class="i" viewBox="0 0 24 24"><circle cx="8" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M2 20c0-3 2.7-5 6-5s6 2 6 5M15 15c3 0 6 1.5 6 4.5"/></svg>الموظفين</a>
       <hr>
       <a href="./" target="_blank" rel="noopener"><svg class="i" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg>فورم التسجيل</a>
     </nav>
@@ -365,6 +366,11 @@ const ICON = {
 };
 
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const STAFF_DOMAIN = "staff.weslat.net";
+const toEmail = v => { v = String(v || "").trim().toLowerCase(); return v.includes("@") ? v : v + "@" + STAFF_DOMAIN; };
+const userLabel = e => String(e || "").endsWith("@" + STAFF_DOMAIN) ? e.split("@")[0] : e;
+const ROLES = { owner: "مالك النظام", manager: "مدير فرع", staff: "موظف فرع" };
+let me = null;
 let rows = [];
 const state = { requests: { q: "", status: "", vehicle: "", page: 0, size: 20 }, approved: { q: "", from: "", to: "", vehicle: "", page: 0, size: 20 } };
 
@@ -376,7 +382,7 @@ async function boot() {
 $("login-form").onsubmit = async e => {
   e.preventDefault();
   $("login-btn").disabled = true; $("login-err").textContent = "";
-  const { data, error } = await sb.auth.signInWithPassword({ email: $("email").value.trim(), password: $("password").value });
+  const { data, error } = await sb.auth.signInWithPassword({ email: toEmail($("email").value), password: $("password").value });
   $("login-btn").disabled = false;
   if (error) { $("login-err").textContent = "البريد أو كلمة المرور غير صحيحة"; return; }
   enter(data.session);
@@ -389,7 +395,10 @@ $("scrim").onclick = () => { $("drawer").classList.remove("open"); $("scrim").hi
 
 async function enter(session) {
   $("login").hidden = true;
-  $("who").textContent = session.user.email;
+  const { data: prof } = await sb.rpc("my_staff");
+  me = (prof && prof[0]) || null;
+  $("who").innerHTML = me ? `${esc(me.name || userLabel(session.user.email))}<br><small>${esc(ROLES[me.role] || "")}${me.branch ? " · " + esc(me.branch) : ""}</small>` : esc(session.user.email);
+  $("nav-staff").hidden = !(me && me.role === "owner");
   $("view").innerHTML = `<div class="card empty">جارٍ تحميل البيانات...</div>`;
   $("app").hidden = false;
   await load();
@@ -422,7 +431,7 @@ function route() {
   document.querySelectorAll("[data-nav]").forEach(a => a.classList.toggle("on", a.dataset.nav === (page === "driver" ? "" : page)));
   window.scrollTo(0, 0);
   if (isAdd) return openAdd();
-  ({ dashboard: viewDashboard, requests: () => viewList("requests"), approved: () => viewList("approved"), driver: () => viewDriver(id) }[page] || viewDashboard)();
+  ({ dashboard: viewDashboard, requests: () => viewList("requests"), approved: () => viewList("approved"), driver: () => viewDriver(id), staff: viewStaff }[page] || viewDashboard)();
 }
 const crumb = (title, extra = "") => `<div class="crumb"><a href="#/dashboard">الرئيسية</a><span class="sep">«</span><span>${title}</span><span class="sp"></span>${extra}</div>`;
 
@@ -692,6 +701,8 @@ $("a-vehicles").innerHTML = VEHICLES.map(x => vehicleCard("vehicle_type", x)).jo
 $("a-cities").innerHTML = CITIES.map(c => `<label class="ck"><input type="checkbox" name="cities" value="${c}"><span>${c}</span></label>`).join("");
 function openAdd() {
   $("add-form").reset(); $("a-msg").textContent = "";
+  if (me && me.branch) $("a-branch").value = me.branch;
+  $("a-branch").disabled = !!(me && me.role === "staff" && me.branch);
   document.querySelectorAll("#add-form .inv").forEach(f => f.classList.remove("inv"));
   $("savegrp").classList.remove("ready");
 }
@@ -724,7 +735,7 @@ $("add-form").addEventListener("submit", async e => {
     const [vehicle_photo_path, license_photo_path] = await Promise.all([
       uploadDoc(fd.get("vehicle_photo"), "manual/vehicles"), uploadDoc(fd.get("license_photo"), "manual/licenses")]);
     const row = {
-      status: txt("status"), branch: txt("branch"), full_name: txt("full_name"), phone: normPhone(fd.get("phone")),
+      status: txt("status"), branch: $("a-branch").value || null, full_name: txt("full_name"), phone: normPhone(fd.get("phone")),
       whatsapp: txt("whatsapp") ? normPhone(fd.get("whatsapp")) : null,
       residence_city: txt("residence_city"), residence_area: txt("residence_area"),
       license_type: txt("license_type"), experience_years: num("experience_years"),
@@ -744,6 +755,78 @@ $("add-form").addEventListener("submit", async e => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   } finally { $("a-save").disabled = false; }
 });
+
+// ---------- staff management (owner) ----------
+const genPass = () => { const c = "abcdefghjkmnpqrstuvwxyz23456789"; let p = ""; const a = crypto.getRandomValues(new Uint32Array(8)); a.forEach(n => p += c[n % c.length]); return p; };
+async function viewStaff() {
+  if (!(me && me.role === "owner")) { $("view").innerHTML = crumb("الموظفين") + `<div class="card empty">الصفحة دي لمالك النظام فقط</div>`; return; }
+  $("view").innerHTML = crumb("الموظفين") + `
+    <section class="card">
+      <h3 class="card-title">${ICON.user}إضافة موظف</h3>
+      <form id="s-form" class="fields" novalidate autocomplete="off">
+        <div class="field"><label>الاسم *</label><input name="name" required></div>
+        <div class="field"><label>اسم المستخدم أو البريد *</label><input name="user" required dir="ltr" autocapitalize="off" spellcheck="false" placeholder="مثلاً: kassala1"></div>
+        <div class="field" style="display:flex;align-items:flex-end"><label>كلمة السر *</label><input name="pass" required dir="ltr" minlength="6" style="flex:1"><button type="button" class="btn btn-ghost" id="s-gen" style="margin:0 8px 8px;padding:6px 14px;font-size:13px">توليد</button></div>
+        <div class="field sel"><label>الفرع *</label><select name="branch" required><option value=""></option>${BRANCHES.map(b => `<option>${b}</option>`).join("")}</select></div>
+        <div class="field sel"><label>الصلاحية *</label><select name="role"><option value="staff">موظف فرع</option><option value="manager">مدير فرع</option><option value="owner">مالك النظام (كل الصلاحيات)</option></select></div>
+        <div style="display:flex;align-items:center;gap:10px"><button class="btn btn-primary" id="s-save">إنشاء الحساب</button><span class="formmsg" id="s-msg" style="margin:0"></span></div>
+      </form>
+      <div id="s-done" hidden></div>
+    </section>
+    <section class="table-card"><div class="tscroll" id="s-table"><div class="empty">جارٍ التحميل...</div></div></section>
+    <p class="hint">اسم المستخدم بدون @ بيتحوّل لحساب داخلي (مثلاً kassala1@${STAFF_DOMAIN})، والموظف بيدخل باسم المستخدم وكلمة السر بس.</p>`;
+  const f = $("s-form");
+  $("s-gen").onclick = () => { f.pass.value = genPass(); };
+  f.onsubmit = async e => {
+    e.preventDefault();
+    const name = f.name.value.trim(), user = f.user.value.trim(), pass = f.pass.value, branch = f.branch.value, role = f.role.value;
+    if (!name || !user || !pass || !branch) { $("s-msg").textContent = "عبّي كل الحقول"; return; }
+    if (pass.length < 6) { $("s-msg").textContent = "كلمة السر 6 أحرف أو أكثر"; return; }
+    if (!user.includes("@") && !/^[a-z0-9._-]{3,}$/i.test(user)) { $("s-msg").textContent = "اسم المستخدم: حروف إنجليزية وأرقام فقط (3 أو أكثر)"; return; }
+    $("s-save").disabled = true; $("s-msg").textContent = "";
+    const { error } = await sb.rpc("create_staff", { p_email: toEmail(user), p_password: pass, p_name: name, p_branch: branch, p_role: role });
+    $("s-save").disabled = false;
+    if (error) { $("s-msg").textContent = error.message; return; }
+    const url = location.origin + location.pathname;
+    const msg = `حسابك في لوحة سائقين وصلت:\nالرابط: ${url}\nاسم المستخدم: ${userLabel(toEmail(user))}\nكلمة السر: ${pass}\nالفرع: ${branch}`;
+    $("s-done").hidden = false;
+    $("s-done").innerHTML = `<div class="card" style="background:#E8F5E9;box-shadow:none;margin:18px 0 0">
+      <b>تم إنشاء حساب ${esc(name)}</b>
+      <pre style="white-space:pre-wrap;font-family:inherit;margin:10px 0">${esc(msg)}</pre>
+      <div class="actions"><button class="btn btn-tonal" id="s-copy">نسخ البيانات</button><a class="btn btn-wa" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(msg)}">إرسال واتساب</a></div></div>`;
+    $("s-copy").onclick = () => navigator.clipboard.writeText(msg).then(() => $("s-copy").textContent = "تم النسخ ✓");
+    f.reset(); loadStaff();
+  };
+  loadStaff();
+}
+async function loadStaff() {
+  const { data, error } = await sb.from("admins").select("*").order("created_at", { ascending: true });
+  if (error) { $("s-table").innerHTML = `<div class="empty">تعذّر التحميل: ${esc(error.message)}</div>`; return; }
+  $("s-table").innerHTML = `<table><thead><tr><th>الاسم</th><th>اسم المستخدم</th><th>الفرع</th><th>الصلاحية</th><th>الحالة</th><th></th></tr></thead><tbody>${
+    data.map(a => `<tr data-email="${esc(a.email)}" style="cursor:default">
+      <td>${esc(a.name || "—")}</td><td dir="ltr" style="text-align:right">${esc(userLabel(a.email))}</td><td>${esc(a.branch || "—")}</td>
+      <td>${esc(ROLES[a.role] || a.role)}</td>
+      <td>${a.active ? `<span class="chip s-ok">نشط</span>` : `<span class="chip s-new">موقوف</span>`}</td>
+      <td style="white-space:nowrap">${a.email === (me && me.email) ? `<span class="hint">حسابك</span>` : `
+        <button class="btn btn-ghost" data-act="pass" style="padding:5px 12px;font-size:13px">كلمة سر جديدة</button>
+        <button class="btn btn-ghost" data-act="toggle" style="padding:5px 12px;font-size:13px">${a.active ? "إيقاف" : "تفعيل"}</button>
+        <button class="btn btn-no" data-act="del" style="padding:5px 12px;font-size:13px">حذف</button>`}</td></tr>`).join("")}</tbody></table>`;
+  $("s-table").querySelectorAll("[data-act]").forEach(b => b.onclick = async () => {
+    const email = b.closest("tr").dataset.email, row = data.find(x => x.email === email);
+    if (b.dataset.act === "pass") {
+      const p = prompt("كلمة السر الجديدة لـ " + userLabel(email), genPass()); if (!p) return;
+      const { error } = await sb.rpc("set_staff_password", { p_email: email, p_password: p });
+      alert(error ? error.message : "تم تغيير كلمة السر:\n" + p);
+    } else if (b.dataset.act === "toggle") {
+      const { error } = await sb.from("admins").update({ active: !row.active }).eq("email", email);
+      if (error) alert(error.message); else loadStaff();
+    } else if (b.dataset.act === "del") {
+      if (!confirm("حذف حساب " + userLabel(email) + " نهائياً؟")) return;
+      const { error } = await sb.rpc("delete_staff", { p_email: email });
+      if (error) alert(error.message); else loadStaff();
+    }
+  });
+}
 
 // ---------- export ----------
 function exportCsv(data, name) {
