@@ -194,6 +194,17 @@ td .route b{color:var(--yellow);margin:0 8px}
 .login .field{margin-bottom:14px;text-align:right}
 .login .err{color:#D32F2F;min-height:22px;font-size:14px;margin-top:8px}
 
+.bell{position:relative;color:#616161}
+.bell .dot{position:absolute;top:6px;right:6px;min-width:18px;height:18px;border-radius:9px;background:#E91E63;color:#fff;font-size:11px;font-weight:700;display:grid;place-items:center;padding:0 4px}
+.bell.off svg.i{opacity:.45}
+.toasts{position:fixed;bottom:20px;left:20px;z-index:90;display:flex;flex-direction:column;gap:10px;max-width:min(380px,calc(100vw - 40px))}
+.toast{background:#323232;color:#fff;border-radius:12px;padding:14px 16px;box-shadow:0 6px 20px rgba(0,0,0,.25);display:flex;gap:12px;align-items:center;animation:tin .25s ease}
+.toast b{display:block;font-size:15px}
+.toast small{color:#CFCFCF;font-size:13px}
+.toast .t{flex:1;min-width:0}
+.toast button{border:0;background:none;color:#8FB0FF;font-weight:700;cursor:pointer;font-size:14px;white-space:nowrap}
+.toast .x{color:#9E9E9E;font-size:18px;padding:0 4px}
+@keyframes tin{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 .viewer{position:fixed;inset:0;background:rgba(0,0,0,.8);display:grid;place-items:center;z-index:80;padding:20px}
 .viewer img{max-width:100%;max-height:86vh;border-radius:12px;background:#fff}
 .viewer button{position:absolute;top:16px;left:16px}
@@ -235,6 +246,7 @@ td .route b{color:var(--yellow);margin:0 8px}
     <button class="icon-btn" id="menu-btn" aria-label="القائمة"><svg class="i" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
     <img class="logo" src="logo-h.png" alt="وصلت">
     <span class="sp"></span>
+    <button class="icon-btn bell off" id="bell" title="تفعيل الإشعارات" aria-label="الإشعارات"><svg class="i" viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4zM10 21h4"/></svg><span class="dot" id="bell-n" hidden>0</span></button>
     <button class="avatar" id="avatar" aria-label="الحساب"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6z"/></svg></button>
     <div class="menu" id="menu" hidden>
       <div class="who" id="who"></div>
@@ -326,6 +338,7 @@ td .route b{color:var(--yellow);margin:0 8px}
   </form>
 </div>
 
+<div class="toasts" id="toasts" aria-live="polite"></div>
 <div class="viewer" id="viewer" hidden><button class="btn btn-ghost" id="viewer-close">إغلاق</button><img id="viewer-img" alt=""></div>
 
 <script>
@@ -404,6 +417,7 @@ async function enter(session) {
   await load();
   window.addEventListener("hashchange", route);
   route();
+  startLive();
 }
 
 async function load() {
@@ -826,6 +840,86 @@ async function loadStaff() {
       if (error) alert(error.message); else loadStaff();
     }
   });
+}
+
+// ---------- live notifications ----------
+let unread = 0, audioCtx = null, lastSeen = null;
+const baseTitle = document.title;
+function chime() {
+  try {
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === "suspended") audioCtx.resume();
+    [[880, 0], [1320, 0.18], [1760, 0.36]].forEach(([f, t]) => {
+      const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+      o.type = "sine"; o.frequency.value = f;
+      g.gain.setValueAtTime(0.0001, audioCtx.currentTime + t);
+      g.gain.exponentialRampToValueAtTime(0.35, audioCtx.currentTime + t + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + t + 0.5);
+      o.connect(g).connect(audioCtx.destination); o.start(audioCtx.currentTime + t); o.stop(audioCtx.currentTime + t + 0.55);
+    });
+  } catch (e) {}
+}
+function setUnread(n) {
+  unread = n;
+  $("bell-n").hidden = !n; $("bell-n").textContent = n;
+  document.title = n ? `(${n}) طلب جديد – ${baseTitle}` : baseTitle;
+}
+function bellState() {
+  const on = "Notification" in window ? Notification.permission === "granted" : !!audioCtx;
+  $("bell").classList.toggle("off", !on && !audioCtx);
+  $("bell").title = on ? "الإشعارات مفعّلة" : "اضغط لتفعيل الصوت والإشعارات";
+}
+$("bell").onclick = async e => {
+  e.stopPropagation();
+  chime();
+  if ("Notification" in window && Notification.permission === "default") { try { await Notification.requestPermission(); } catch (_) {} }
+  bellState();
+  if (unread) { setUnread(0); location.hash = "#/requests"; }
+};
+// المتصفح ما بيسمح بالصوت قبل أول ضغطة في الصفحة
+document.addEventListener("pointerdown", () => { if (!audioCtx) { try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); bellState(); } catch (_) {} } }, { once: true });
+
+function toast(r) {
+  const el = document.createElement("div");
+  el.className = "toast";
+  el.innerHTML = `<div class="t"><b>طلب تسجيل جديد</b><small>${esc(r.full_name)} · ${esc(r.vehicle_type)} · ${esc(r.route_from)} ← ${esc(r.route_to)}</small></div><button data-open>عرض</button><button class="x" aria-label="إغلاق">×</button>`;
+  el.querySelector("[data-open]").onclick = () => { el.remove(); setUnread(Math.max(0, unread - 1)); location.hash = "#/driver/" + r.id; };
+  el.querySelector(".x").onclick = () => el.remove();
+  $("toasts").prepend(el);
+  setTimeout(() => el.remove(), 15000);
+}
+function systemNotify(r) {
+  if (!("Notification" in window) || Notification.permission !== "granted" || !document.hidden) return;
+  try {
+    const n = new Notification("طلب تسجيل جديد – وصلت", { body: `${r.full_name} · ${r.vehicle_type} · ${r.route_from} ← ${r.route_to}`, icon: "logo.png", tag: "drv-" + r.id });
+    n.onclick = () => { window.focus(); location.hash = "#/driver/" + r.id; n.close(); };
+  } catch (_) {}
+}
+function onRow(r, isNew) {
+  const i = rows.findIndex(x => x.id === r.id);
+  if (i >= 0) { Object.assign(rows[i], r); updateNav(); return; }
+  rows.unshift(r); updateNav();
+  if (isNew && r.source !== "manual" && !(me && r.added_by === me.email)) {
+    setUnread(unread + 1); chime(); toast(r); systemNotify(r);
+  }
+  // حدّث الصفحة لو كانت قائمة أو لوحة التحكم، وما تقاطع الموظف وهو بيكتب
+  const page = (location.hash.split("/")[1] || "dashboard");
+  if (["dashboard", "requests", "approved"].includes(page) && !document.activeElement.matches("input,textarea,select")) route();
+}
+function startLive() {
+  lastSeen = rows.length ? rows[0].created_at : new Date().toISOString();
+  bellState();
+  try {
+    sb.channel("driver-registrations")
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: TABLE }, p => onRow(p.new, true))
+      .on("postgres_changes", { event: "UPDATE", schema: "public", table: TABLE }, p => onRow(p.new, false))
+      .subscribe();
+  } catch (_) {}
+  // احتياطي: فحص كل 45 ثانية لو الإشعارات اللحظية ما مفعّلة
+  setInterval(async () => {
+    const { data } = await sb.from(TABLE).select("*").gt("created_at", lastSeen).order("created_at", { ascending: true });
+    (data || []).forEach(r => { lastSeen = r.created_at > lastSeen ? r.created_at : lastSeen; onRow(r, true); });
+  }, 45000);
 }
 
 // ---------- export ----------
