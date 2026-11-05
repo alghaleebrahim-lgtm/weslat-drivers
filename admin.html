@@ -4,304 +4,375 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>لوحة السائقين – وصلت</title>
+<title>السائقين – وصلت</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="vehicles.js"></script>
 <style>
-  :root{--blue:#002EB0;--blue-dark:#00218A;--yellow:#FFBA08;--ink:#0F1B3D;--muted:#5B6585;--line:#E1E6F0;--bg:#F3F5FB;--green:#1B8A4B;--red:#C62828;--orange:#B26A00}
-  *{box-sizing:border-box}
-  body{margin:0;font-family:'Tajawal',system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased}
-  button,input,select,textarea{font:inherit}
-  [hidden]{display:none!important}
+:root{
+  --primary:#0033B4;--primary-d:#00268A;--yellow:#FFC101;
+  --text:#212121;--muted:#6B6B6B;--line:#E0E0E0;--bg:#F5F6F8;--field:#EFEFEF;--field-h:#E6E6E6;
+  --c-new:#607D8B;--c-contact:#3F51B5;--c-ok:#4CAF50;--c-no:#E91E63;--c-amber:#FFC107;--c-teal:#009688;
+  --radius:16px;--shadow:0 1px 3px rgba(0,0,0,.08),0 2px 6px rgba(0,0,0,.06);
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:'Cairo',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--primary);text-decoration:none}
+[hidden]{display:none!important}
+svg.i{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex:none}
 
-  .login{min-height:100vh;display:grid;place-items:center;padding:20px}
-  .login-card{background:#fff;border-radius:18px;box-shadow:0 10px 30px rgba(15,27,61,.08);padding:32px 26px;width:100%;max-width:380px;text-align:center}
-  .login-card img{width:64px;height:64px;margin-bottom:10px}
-  .login-card h1{font-size:22px;margin:0 0 4px;color:var(--blue)}
-  .login-card p{margin:0 0 22px;color:var(--muted);font-size:14px}
-  .login-card input{width:100%;margin-bottom:12px}
-  .login-card .err{color:var(--red);font-size:14px;min-height:20px;margin-top:8px}
+/* ---------- app bar ---------- */
+.appbar{position:sticky;top:0;z-index:30;height:72px;background:#fff;display:flex;align-items:center;gap:14px;padding:0 18px;box-shadow:0 1px 0 var(--line)}
+.icon-btn{width:44px;height:44px;border:0;background:none;border-radius:50%;display:grid;place-items:center;cursor:pointer;color:var(--primary)}
+.icon-btn:hover{background:#F0F3FB}
+.icon-btn svg.i{width:28px;height:28px;stroke-width:2.2}
+.appbar .logo{height:48px}
+.appbar .sp{flex:1}
+.avatar{width:44px;height:44px;border-radius:50%;background:#BDBDBD;display:grid;place-items:center;color:#fff;border:0;cursor:pointer;position:relative}
+.avatar svg{width:26px;height:26px;fill:#fff}
+.avatar::after{content:"";position:absolute;top:0;left:2px;width:10px;height:10px;border-radius:50%;background:var(--primary)}
+.menu{position:absolute;top:64px;left:14px;background:#fff;border-radius:12px;box-shadow:0 6px 24px rgba(0,0,0,.16);min-width:220px;padding:8px 0;z-index:40}
+.menu .who{padding:8px 16px 10px;font-size:13px;color:var(--muted);border-bottom:1px solid var(--line);direction:ltr;text-align:right}
+.menu button{display:flex;gap:10px;align-items:center;width:100%;border:0;background:none;padding:10px 16px;cursor:pointer;text-align:right}
+.menu button:hover{background:#F5F5F5}
 
-  input[type=email],input[type=password],input[type=search],input[type=text],input[type=tel],input[type=number],select,textarea{border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:15px;background:#fff;color:var(--ink);outline:none;width:100%}
-  input:focus,select:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,46,176,.12)}
-  input[type=email],input[type=password],input[type=tel]{direction:ltr;text-align:right}
+/* ---------- drawer ---------- */
+.layout{display:flex;min-height:calc(100vh - 72px)}
+.drawer{width:270px;flex:none;background:#fff;border-left:1px solid var(--line);padding:10px 0;position:sticky;top:72px;height:calc(100vh - 72px);overflow:auto}
+.drawer a{display:flex;align-items:center;gap:16px;padding:13px 24px;color:var(--text);font-size:16px}
+.drawer a:hover{background:#F6F7FA}
+.drawer a.on{color:var(--primary)}
+.drawer a.on svg.i{color:var(--primary)}
+.drawer .n{margin-inline-start:auto;background:var(--primary);color:#fff;border-radius:999px;font-size:12px;min-width:26px;text-align:center;padding:1px 8px}
+.drawer hr{border:0;border-top:1px solid var(--line);margin:8px 0}
+.scrim{display:none}
+main{flex:1;min-width:0}
+.content{padding:20px;max-width:1200px;margin:0 auto}
+.foot{text-align:center;color:var(--muted);font-size:14px;padding:18px 0 26px}
 
-  .btn{border:0;border-radius:10px;padding:10px 16px;font-weight:700;font-size:15px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;text-decoration:none;transition:background .15s;white-space:nowrap}
-  .btn-primary{background:var(--blue);color:#fff}.btn-primary:hover{background:var(--blue-dark)}
-  .btn-yellow{background:var(--yellow);color:var(--ink)}.btn-yellow:hover{background:#F0AE00}
-  .btn-light{background:#EEF1F8;color:var(--ink)}.btn-light:hover{background:#E3E8F3}
-  .btn-wa{background:#E7F7EE;color:var(--green)}.btn-wa:hover{background:#D5F0E0}
-  .btn-call{background:#EAF0FF;color:var(--blue)}.btn-call:hover{background:#DCE5FF}
-  .btn-ok{background:var(--green);color:#fff}.btn-ok:hover{background:#15703D}
-  .btn-no{background:#FDECEC;color:var(--red)}.btn-no:hover{background:#FADADA}
-  .btn-sm{padding:7px 12px;font-size:14px}
-  .btn:disabled{opacity:.6;cursor:wait}
+/* ---------- common ---------- */
+.card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:22px;margin-bottom:20px}
+.card-title{display:flex;align-items:center;gap:10px;font-size:19px;font-weight:600;margin:0 0 18px}
+.card-title svg.i{width:24px;height:24px}
+.card-title .sp{flex:1}
+.crumb{background:#F0F1F4;margin:-20px -20px 0;padding:14px 24px;display:flex;align-items:center;gap:10px;font-size:17px;margin-bottom:16px}
+.crumb a{color:var(--primary)}
+.crumb .sep{color:var(--muted);font-size:14px}
+.crumb .sp{flex:1}
+.pill{display:inline-block;min-width:62px;text-align:center;background:var(--primary);color:#fff;border-radius:999px;padding:5px 18px;font-weight:600}
+.chip{display:inline-block;border-radius:999px;padding:3px 16px;color:#fff;font-size:14px;font-weight:500;white-space:nowrap}
+.chip.s-new{background:var(--c-new)}.chip.s-contact{background:var(--c-contact)}.chip.s-ok{background:var(--c-ok)}.chip.s-no{background:var(--c-no)}
+.chip.match{background:var(--c-amber);color:#212121}
+.btn{border:0;border-radius:999px;padding:9px 22px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:8px;justify-content:center;white-space:nowrap}
+.btn-primary{background:var(--primary);color:#fff}.btn-primary:hover{background:var(--primary-d)}
+.btn-tonal{background:#E8EDFB;color:var(--primary)}.btn-tonal:hover{background:#DCE3F8}
+.btn-ok{background:var(--c-ok);color:#fff}.btn-no{background:#FCE4EC;color:#C2185B}
+.btn-ghost{background:#F2F2F2;color:var(--text)}.btn-ghost:hover{background:#E9E9E9}
+.btn-wa{background:#E8F5E9;color:#2E7D32}
+.btn:disabled{opacity:.55;cursor:default}
+.fab{width:64px;height:38px;border-radius:999px;border:0;background:#9DB0E6;color:#fff;display:grid;place-items:center;cursor:pointer}
+.fab:hover{background:var(--primary)}
+.fab svg.i{stroke-width:2.4}
 
-  .top{background:var(--blue);color:#fff}
-  .top-inner{max-width:1200px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:12px}
-  .top img{width:36px;height:36px;background:#fff;border-radius:9px;padding:3px}
-  .top h1{font-size:18px;margin:0;flex:1}
-  .top .who{font-size:13px;opacity:.85;direction:ltr}
-  .top .btn-light{background:rgba(255,255,255,.14);color:#fff}
-  .wrap{max-width:1200px;margin:0 auto;padding:18px 20px 40px}
+/* material filled field */
+.field{position:relative;background:var(--field);border-radius:12px 12px 0 0;border-bottom:1.5px solid #9E9E9E;transition:background .15s}
+.field:hover{background:var(--field-h)}
+.field:focus-within{border-bottom:2px solid var(--primary)}
+.field label{position:absolute;right:18px;top:8px;font-size:12.5px;color:var(--muted);pointer-events:none}
+.field label .req{color:inherit}
+.field:focus-within label{color:var(--primary)}
+.field input,.field select,.field textarea{width:100%;border:0;background:transparent;outline:none;padding:28px 18px 9px;font-size:16px;appearance:none;-webkit-appearance:none}
+.field select{padding-left:44px;cursor:pointer}
+.field.sel::after{content:"";position:absolute;left:20px;top:50%;margin-top:-2px;border:6px solid transparent;border-top-color:#757575;pointer-events:none}
+.field textarea{resize:vertical;min-height:90px}
+.field input[type=tel]{direction:ltr;text-align:right}
+.field.inv{border-bottom-color:#D32F2F}.field.inv label{color:#D32F2F}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.fields .full{grid-column:1/-1}
 
-  .tabs{display:flex;gap:8px;margin-bottom:16px;border-bottom:1px solid var(--line)}
-  .tab{background:none;border:0;padding:12px 16px;font-weight:700;font-size:16px;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-1px;display:flex;gap:8px;align-items:center}
-  .tab.on{color:var(--blue);border-bottom-color:var(--blue)}
-  .tab .n{background:#E7ECF7;color:var(--ink);border-radius:999px;font-size:12px;padding:2px 9px}
-  .tab.on .n{background:var(--blue);color:#fff}
+/* ---------- dashboard ---------- */
+.dash{display:grid;grid-template-columns:1.3fr 1fr;gap:20px;align-items:start}
+.dash .card{margin:0}
+.donut-wrap{display:flex;flex-direction:column;align-items:center;gap:22px}
+.legend{display:grid;grid-template-columns:repeat(2,auto);gap:10px 34px}
+.legend span{display:flex;align-items:center;gap:10px;font-size:16px}
+.legend i{width:34px;height:18px;border-radius:6px;display:inline-block}
+.list-row{display:flex;align-items:center;gap:14px;padding:13px 0;font-size:17px}
+.list-row+.list-row{border-top:0}
+.list-row svg.i{color:#616161}
+.list-row .sp{flex:1}
+.list-row.link{cursor:pointer}
 
-  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
-  .stat{background:#fff;border-radius:14px;padding:12px 16px;border:1px solid var(--line);cursor:pointer;text-align:right}
-  .stat:hover,.stat.on{border-color:var(--blue)}
-  .stat b{display:block;font-size:24px;font-weight:800;line-height:1.1}
-  .stat span{font-size:13px;color:var(--muted)}
+/* ---------- table ---------- */
+.table-card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:20px}
+.table-tools{display:flex;flex-wrap:wrap;gap:12px;align-items:center;padding:14px 18px;border-bottom:1px solid var(--line)}
+.table-tools .search{flex:1;min-width:220px;display:flex;align-items:center;gap:8px;background:var(--field);border-radius:999px;padding:0 16px}
+.table-tools .search input{border:0;background:none;outline:none;padding:10px 0;width:100%;font-size:15px}
+.table-tools select{border:0;background:var(--field);border-radius:999px;padding:9px 16px;font-size:14px;outline:none;cursor:pointer}
+.tscroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:760px}
+th{text-align:right;font-weight:500;font-size:16px;color:var(--text);padding:18px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:16px 18px;border-bottom:1px solid var(--line);vertical-align:middle;font-size:15.5px}
+tbody tr{cursor:pointer}
+tbody tr:hover{background:#F7F8FA}
+td .code{color:var(--primary);font-weight:500;direction:ltr;display:inline-block}
+td .sub{display:block;font-size:13.5px;color:var(--muted)}
+td .route{white-space:nowrap}
+td .route b{color:var(--yellow);margin:0 8px}
+.paginator{display:flex;align-items:center;justify-content:flex-end;gap:6px;padding:10px 18px;color:var(--text)}
+.paginator .sz{display:flex;align-items:center;gap:6px;margin-inline-end:auto}
+.paginator select{border:0;background:none;font-size:15px;outline:none}
+.paginator button{border:0;background:none;width:40px;height:40px;border-radius:50%;cursor:pointer;color:#424242;display:grid;place-items:center}
+.paginator button:disabled{color:#BDBDBD;cursor:default}
+.paginator button:not(:disabled):hover{background:#F0F0F0}
+.empty{padding:40px 20px;text-align:center;color:var(--muted)}
 
-  .finder{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:16px}
-  .finder h3{margin:0 0 10px;font-size:16px;color:var(--blue)}
-  .finder .row{display:grid;grid-template-columns:1fr auto 1fr 1fr auto;gap:10px;align-items:center}
-  .finder .swap{background:#EEF1F8;border:0;border-radius:10px;width:42px;height:42px;cursor:pointer;font-size:18px}
-  .finder p{margin:8px 0 0;font-size:13px;color:var(--muted)}
+/* route finder */
+.finder{display:grid;grid-template-columns:1fr auto 1fr 1fr auto;gap:12px;align-items:center}
+.swap{width:46px;height:46px;border-radius:50%;border:0;background:#E8EDFB;color:var(--primary);cursor:pointer;font-size:20px}
+.hint{font-size:13.5px;color:var(--muted);margin:12px 0 0}
 
-  .filters{display:flex;flex-wrap:wrap;gap:10px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:14px}
-  .filters input[type=search]{flex:1;min-width:200px;width:auto}
-  .filters select{width:auto;min-width:140px}
-  .count{font-size:14px;color:var(--muted);margin-bottom:10px}
+/* ---------- detail ---------- */
+.detail-head{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.detail-head .vic{width:66px;height:52px;border-radius:14px;background:#EEF2FC;display:grid;place-items:center;color:var(--primary)}
+.vic svg{width:48px;height:26px;transform:scaleX(-1)}
+.vic .b{fill:none;stroke:currentColor;stroke-width:2.2;stroke-linejoin:round;stroke-linecap:round}
+.vic .g{fill:currentColor;opacity:.18}.vic .w{fill:var(--yellow);stroke:currentColor;stroke-width:2}
+.detail-head h2{margin:0;font-size:22px;font-weight:700}
+.detail-head .code{color:var(--primary);direction:ltr;font-weight:600}
+.kv{display:grid;grid-template-columns:150px 1fr;gap:0}
+.kv div{padding:11px 0;border-bottom:1px solid #F0F0F0}
+.kv div:nth-child(odd){color:var(--muted)}
+.actions{display:flex;flex-wrap:wrap;gap:10px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.grid2 .card{margin:0}
+.decision{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.saved{color:var(--c-ok);font-size:14px}
 
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px}
-  .card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:11px}
-  .card-head{display:flex;gap:12px;align-items:flex-start}
-  .vicon{width:54px;height:42px;border-radius:10px;background:#F2F5FD;display:grid;place-items:center;flex:none;color:var(--blue)}
-  .vicon svg{width:40px;height:22px;transform:scaleX(-1)}
-  .vicon .b,.vbox .b{fill:none;stroke:currentColor;stroke-width:2.2;stroke-linejoin:round;stroke-linecap:round}
-  .vicon .g,.vbox .g{fill:currentColor;opacity:.18}
-  .vicon .w{fill:var(--yellow);stroke:currentColor;stroke-width:2}
-  .card-head h3{margin:0;font-size:17px}
-  .card-head .sub{font-size:13px;color:var(--muted)}
-  .badges{margin-inline-start:auto;display:flex;flex-direction:column;gap:4px;align-items:flex-end}
-  .badge{font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;white-space:nowrap}
-  .badge[data-s="جديد"]{background:#EAF0FF;color:var(--blue)}
-  .badge[data-s="تم التواصل"]{background:#FFF4D6;color:var(--orange)}
-  .badge[data-s="مقبول"]{background:#E7F7EE;color:var(--green)}
-  .badge[data-s="مرفوض"]{background:#FDECEC;color:var(--red)}
-  .badge.match{background:var(--yellow);color:var(--ink)}
-  .badge.manual{background:#F1EAFE;color:#5B2DB0}
+/* ---------- form page (like إنشاء شحنة) ---------- */
+.formbar{position:sticky;top:0;z-index:35;height:72px;background:#fff;display:flex;align-items:center;gap:14px;padding:0 18px;box-shadow:0 1px 0 var(--line)}
+.formbar .close{color:#616161}
+.formbar h1{font-size:22px;font-weight:500;margin:0}
+.formbar .sp{flex:1}
+.savegrp{display:flex;align-items:stretch;background:#E0E0E0;border-radius:12px;box-shadow:0 2px 6px rgba(0,0,0,.18);overflow:hidden}
+.savegrp button{border:0;background:none;padding:10px 20px;display:flex;gap:8px;align-items:center;cursor:pointer;color:#424242;font-size:17px}
+.savegrp.ready{background:var(--primary)}
+.savegrp.ready button{color:#fff}
+.savegrp button:disabled{cursor:wait;opacity:.7}
+.form-page{max-width:900px;margin:0 auto;padding:20px}
+.vehicles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.vcard{position:relative;display:block}
+.vcard input{position:absolute;opacity:0;pointer-events:none}
+.vbox{display:flex;flex-direction:column;align-items:center;gap:1px;padding:12px 6px 9px;border-radius:12px;background:var(--field);cursor:pointer;text-align:center;height:100%;border:2px solid transparent}
+.vbox svg{width:56px;height:28px;margin-bottom:5px;transform:scaleX(-1);color:#8A8A8A}
+.vbox .b{fill:none;stroke:currentColor;stroke-width:2.2;stroke-linejoin:round;stroke-linecap:round}
+.vbox .g{fill:currentColor;opacity:.18}.vbox .w{fill:#fff;stroke:currentColor;stroke-width:2}
+.vbox b{font-size:14px;font-weight:600}.vbox small{font-size:11.5px;color:var(--muted)}
+.vcard input:checked+.vbox{border-color:var(--primary);background:#EEF2FC}
+.vcard input:checked+.vbox svg{color:var(--primary)}
+.vcard input:checked+.vbox .w{fill:var(--yellow)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.ck{position:relative}
+.ck input{position:absolute;opacity:0;pointer-events:none}
+.ck span{display:inline-block;padding:6px 16px;border-radius:999px;background:var(--field);cursor:pointer;font-size:14.5px}
+.ck input:checked+span{background:var(--primary);color:#fff}
+.sublabel{font-size:13px;color:var(--muted);margin:0 4px 8px}
+.formmsg{color:#D32F2F;font-size:14.5px;margin:0 0 10px}
+.filebox{background:var(--field);border-radius:12px 12px 0 0;border-bottom:1.5px solid #9E9E9E;padding:10px 18px}
+.filebox label{display:block;font-size:12.5px;color:var(--muted)}
+.filebox input{font-size:14px;margin-top:4px;width:100%}
 
-  .route{display:flex;align-items:center;gap:8px;background:#F7F8FC;border-radius:10px;padding:8px 12px;font-weight:700;font-size:15px}
-  .route .arrow{color:var(--yellow);font-size:18px}
-  .route small{font-weight:400;color:var(--muted);margin-inline-start:auto;font-size:12px}
-  dl{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;margin:0;font-size:14px}
-  dt{color:var(--muted)}
-  dd{margin:0;font-weight:500}
-  .tags{display:flex;flex-wrap:wrap;gap:5px}
-  .tag{font-size:12px;background:#EEF1F8;border-radius:999px;padding:2px 9px}
-  .note{font-size:13px;background:#FFFBEF;border-radius:8px;padding:8px 10px;color:#5d4a10}
-  .meta{font-size:12px;color:var(--muted)}
-  .actions{display:flex;flex-wrap:wrap;gap:8px}
-  .nophoto{font-size:13px;color:var(--muted);align-self:center;background:#F7F8FC;border-radius:8px;padding:6px 10px}
-  .admin-row{display:flex;gap:8px;border-top:1px solid var(--line);padding-top:11px;flex-wrap:wrap;align-items:center}
-  .admin-row select{width:auto;flex:none}
-  .admin-row textarea{flex:1;min-width:160px;min-height:38px;height:38px;resize:vertical;font-size:14px;padding:8px 10px;width:auto}
-  .saved{font-size:12px;color:var(--green)}
+/* ---------- login ---------- */
+.login{min-height:100vh;display:grid;place-items:center;padding:20px}
+.login .card{width:100%;max-width:400px;text-align:center;padding:32px 28px}
+.login img{height:60px;margin-bottom:12px}
+.login h1{font-size:20px;margin:0 0 20px;font-weight:600}
+.login .field{margin-bottom:14px;text-align:right}
+.login .err{color:#D32F2F;min-height:22px;font-size:14px;margin-top:8px}
 
-  .empty,.loading{text-align:center;color:var(--muted);padding:50px 20px;background:#fff;border-radius:16px;border:1px dashed var(--line)}
+.viewer{position:fixed;inset:0;background:rgba(0,0,0,.8);display:grid;place-items:center;z-index:80;padding:20px}
+.viewer img{max-width:100%;max-height:86vh;border-radius:12px;background:#fff}
+.viewer button{position:absolute;top:16px;left:16px}
 
-  .viewer{position:fixed;inset:0;background:rgba(10,15,35,.85);display:grid;place-items:center;z-index:60;padding:20px}
-  .viewer img{max-width:100%;max-height:85vh;border-radius:12px;background:#fff}
-  .viewer button{position:absolute;top:16px;left:16px}
-
-  /* add-driver modal */
-  dialog{border:0;border-radius:18px;padding:0;width:min(760px,96vw);max-height:92vh;box-shadow:0 20px 60px rgba(15,27,61,.3)}
-  dialog::backdrop{background:rgba(10,15,35,.55)}
-  .dlg-head{position:sticky;top:0;background:#fff;padding:16px 22px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;z-index:2}
-  .dlg-head h2{margin:0;font-size:19px;color:var(--blue)}
-  .dlg-body{padding:18px 22px;display:grid;grid-template-columns:1fr 1fr;gap:12px 14px}
-  .dlg-body .full{grid-column:1/-1}
-  .dlg-body label.q{display:block;font-weight:700;font-size:14px;margin-bottom:5px}
-  .dlg-body label.q .req{color:var(--red)}
-  .dlg-body h4{grid-column:1/-1;margin:8px 0 0;font-size:14px;color:var(--muted);border-top:1px solid var(--line);padding-top:12px}
-  .dlg-foot{position:sticky;bottom:0;background:#fff;padding:14px 22px;border-top:1px solid var(--line);display:flex;gap:10px;align-items:center}
-  .dlg-foot .msg{flex:1;font-size:14px;color:var(--red)}
-  .vehicles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-  .vcard{position:relative;display:block}
-  .vcard input{position:absolute;opacity:0;pointer-events:none}
-  .vbox{display:flex;flex-direction:column;align-items:center;gap:1px;padding:10px 6px 8px;border:1.5px solid var(--line);border-radius:12px;background:#fff;cursor:pointer;text-align:center;height:100%}
-  .vbox svg{width:56px;height:28px;margin-bottom:5px;transform:scaleX(-1);color:#8A93AE}
-  .vbox .w{fill:#fff;stroke:currentColor;stroke-width:2}
-  .vbox b{font-size:13.5px}.vbox small{font-size:11px;color:var(--muted)}
-  .vcard input:checked+.vbox{border-color:var(--blue);background:#F2F5FD}
-  .vcard input:checked+.vbox svg{color:var(--blue)}
-  .vcard input:checked+.vbox .w{fill:var(--yellow)}
-  .chips{display:flex;flex-wrap:wrap;gap:6px}
-  .chip{position:relative}
-  .chip input{position:absolute;opacity:0;pointer-events:none}
-  .chip span{display:inline-block;padding:6px 12px;border:1px solid var(--line);border-radius:999px;font-size:14px;cursor:pointer;background:#fff}
-  .chip input:checked+span{background:var(--blue);border-color:var(--blue);color:#fff}
-
-  @media (max-width:760px){
-    .stats{grid-template-columns:repeat(2,1fr)}
-    .finder .row{grid-template-columns:1fr auto 1fr}
-    .finder .row select:nth-of-type(3),.finder .row .btn{grid-column:1/-1}
-    .grid{grid-template-columns:1fr}
-    .top .who{display:none}
-    .wrap{padding:14px}
-    .dlg-body{grid-template-columns:1fr}
-    .vehicles{grid-template-columns:repeat(2,1fr)}
-    .filters select{flex:1 1 40%;min-width:0}
-    .filters input[type=search]{flex-basis:100%}
-  }
+@media (max-width:900px){
+  .drawer{position:fixed;top:0;right:0;height:100vh;z-index:50;transform:translateX(100%);transition:transform .2s;padding-top:20px;box-shadow:-4px 0 20px rgba(0,0,0,.15)}
+  .drawer.open{transform:none}
+  .scrim{display:block;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:45}
+  .dash,.grid2{grid-template-columns:1fr}
+  .content{padding:14px}
+  .crumb{margin:-14px -14px 14px}
+  .fields{grid-template-columns:1fr}
+  .vehicles{grid-template-columns:repeat(2,1fr)}
+  .finder{grid-template-columns:1fr auto 1fr}
+  .finder>:nth-child(4),.finder>:nth-child(5){grid-column:1/-1}
+  .appbar .logo{height:40px}
+  .kv{grid-template-columns:120px 1fr}
+}
+@media (min-width:901px){ #menu-btn{display:none} }
 </style>
 </head>
 <body>
 
+<!-- ============ LOGIN ============ -->
 <section class="login" id="login" hidden>
-  <form class="login-card" id="login-form">
-    <img src="logo.png" alt="وصلت">
-    <h1>لوحة السائقين</h1>
-    <p>لموظفي وصلت المصرّح لهم فقط</p>
-    <input type="email" id="email" placeholder="البريد الإلكتروني" required autocomplete="username">
-    <input type="password" id="password" placeholder="كلمة المرور" required autocomplete="current-password">
-    <button class="btn btn-primary" style="width:100%" id="login-btn">دخول</button>
+  <form class="card" id="login-form">
+    <img src="logo-h.png" alt="وصلت">
+    <h1>تسجيل الدخول – السائقين</h1>
+    <div class="field"><label>البريد الإلكتروني</label><input type="email" id="email" required autocomplete="username" dir="ltr"></div>
+    <div class="field"><label>كلمة المرور</label><input type="password" id="password" required autocomplete="current-password"></div>
+    <button class="btn btn-primary" style="width:100%;padding:12px" id="login-btn">دخول</button>
     <div class="err" id="login-err"></div>
   </form>
 </section>
 
+<!-- ============ APP ============ -->
 <div id="app" hidden>
-  <header class="top">
-    <div class="top-inner">
-      <img src="logo.png" alt="">
-      <h1>لوحة السائقين والمركبات</h1>
-      <span class="who" id="who"></span>
-      <button class="btn btn-yellow btn-sm" id="add-btn">+ إضافة سائق</button>
-      <button class="btn btn-light btn-sm" id="logout">خروج</button>
+  <header class="appbar" id="appbar">
+    <button class="icon-btn" id="menu-btn" aria-label="القائمة"><svg class="i" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+    <img class="logo" src="logo-h.png" alt="وصلت">
+    <span class="sp"></span>
+    <button class="avatar" id="avatar" aria-label="الحساب"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6z"/></svg></button>
+    <div class="menu" id="menu" hidden>
+      <div class="who" id="who"></div>
+      <button id="logout"><svg class="i" viewBox="0 0 24 24"><path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h10"/></svg>تسجيل الخروج</button>
     </div>
   </header>
 
-  <div class="wrap">
-    <nav class="tabs">
-      <button class="tab on" data-tab="requests">طلبات الانضمام <span class="n" id="n-req">0</span></button>
-      <button class="tab" data-tab="approved">السواقين المعتمدين <span class="n" id="n-app">0</span></button>
+  <div class="layout">
+    <nav class="drawer" id="drawer">
+      <a href="#/dashboard" data-nav="dashboard"><svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 13l3-3M8 13h.01M16 13h.01M12 9h.01"/></svg>لوحة التحكم</a>
+      <a href="#/requests" data-nav="requests"><svg class="i" viewBox="0 0 24 24"><path d="M4 13h4l2 3h4l2-3h4M5 13l2-7h10l2 7v6H5z"/></svg>طلبات الانضمام<span class="n" id="nav-req">0</span></a>
+      <a href="#/approved" data-nav="approved"><svg class="i" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M2 20c0-3.5 3-6 7-6s7 2.5 7 6M16 11l2 2 4-4"/></svg>السائقين المعتمدين<span class="n" id="nav-app">0</span></a>
+      <a href="#/add" data-nav="add"><svg class="i" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M2 20c0-3.5 3-6 7-6s7 2.5 7 6M19 8v6M16 11h6"/></svg>إضافة سائق</a>
+      <hr>
+      <a href="./" target="_blank" rel="noopener"><svg class="i" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg>فورم التسجيل</a>
     </nav>
+    <div class="scrim" id="scrim" hidden></div>
 
-    <!-- requests -->
-    <section id="tab-requests">
-      <div class="stats" id="stats"></div>
-    </section>
-
-    <!-- approved: route finder -->
-    <section id="tab-approved" hidden>
-      <div class="finder">
-        <h3>ابحث عن سائق لخط معيّن</h3>
-        <div class="row">
-          <select id="r-from"><option value="">من (أي مدينة)</option></select>
-          <button class="swap" id="r-swap" title="عكس الاتجاه" aria-label="عكس الاتجاه">⇄</button>
-          <select id="r-to"><option value="">إلى (أي مدينة)</option></select>
-          <select id="r-vehicle"><option value="">أي نوع مركبة</option></select>
-          <button class="btn btn-light" id="r-clear">مسح</button>
-        </div>
-        <p>النتائج مرتبة: السائقين على نفس الخط أولاً، بعدهم البيشتغلوا عليه كخط إضافي، بعدهم البيغطوا المدينتين.</p>
-      </div>
-    </section>
-
-    <div class="filters">
-      <input type="search" id="q" placeholder="بحث بالاسم أو الهاتف أو رقم اللوحة">
-      <select id="f-status"><option value="">كل الحالات</option></select>
-      <select id="f-vehicle"><option value="">كل المركبات</option></select>
-      <select id="f-city"><option value="">كل المدن</option></select>
-      <button class="btn btn-light btn-sm" id="refresh">تحديث</button>
-      <button class="btn btn-light btn-sm" id="export">تصدير Excel</button>
-    </div>
-
-    <div class="count" id="count"></div>
-    <div class="grid" id="grid"></div>
-    <div class="loading" id="loading">جارٍ تحميل البيانات...</div>
-    <div class="empty" id="empty" hidden>لا توجد نتائج</div>
+    <main>
+      <div class="content" id="view"></div>
+      <div class="foot">© ٢٠٢٦ وصلت <span style="color:#9E9E9E">· السائقين</span></div>
+    </main>
   </div>
 </div>
 
-<!-- add driver -->
-<dialog id="dlg">
-  <form id="add-form" method="dialog" novalidate>
-    <div class="dlg-head"><h2>إضافة سائق</h2><button type="button" class="btn btn-light btn-sm" id="dlg-close">إغلاق</button></div>
-    <div class="dlg-body">
-      <div><label class="q">الفرع<span class="req">*</span></label><select name="branch" id="a-branch" required></select></div>
-      <div><label class="q">الحالة<span class="req">*</span></label><select name="status"><option>مقبول</option><option>جديد</option><option>تم التواصل</option></select></div>
+<!-- ============ ADD DRIVER PAGE ============ -->
+<div id="addpage" hidden>
+  <header class="formbar">
+    <a class="icon-btn close" href="#/approved" aria-label="إغلاق"><svg class="i" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
+    <h1>إضافة سائق</h1>
+    <span class="sp"></span>
+    <div class="savegrp" id="savegrp"><button type="submit" form="add-form" id="a-save"><svg class="i" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>حفظ</button></div>
+  </header>
+  <form class="form-page" id="add-form" novalidate>
+    <p class="formmsg" id="a-msg"></p>
 
-      <h4>بيانات السائق</h4>
-      <div class="full"><label class="q">الاسم الكامل<span class="req">*</span></label><input type="text" name="full_name" required></div>
-      <div><label class="q">رقم الهاتف<span class="req">*</span></label><input type="tel" name="phone" required placeholder="0912345678"></div>
-      <div><label class="q">رقم الواتساب</label><input type="tel" name="whatsapp" placeholder="لو مختلف"></div>
-      <div><label class="q">مدينة الإقامة<span class="req">*</span></label><select name="residence_city" data-cities required><option value="">اختر</option></select></div>
-      <div><label class="q">الحي<span class="req">*</span></label><input type="text" name="residence_area" required></div>
-      <div><label class="q">نوع الرخصة<span class="req">*</span></label><select name="license_type" required><option value="">اختر</option><option>خاصة</option><option>عامة</option><option>نقل ثقيل</option></select></div>
-      <div><label class="q">سنوات الخبرة</label><input type="number" name="experience_years" min="0"></div>
+    <section class="card">
+      <h3 class="card-title">بيانات التسجيل</h3>
+      <div class="fields">
+        <div class="field sel"><label>الفرع *</label><select name="branch" id="a-branch" required></select></div>
+        <div class="field sel"><label>الحالة *</label><select name="status"><option>مقبول</option><option>جديد</option><option>تم التواصل</option></select></div>
+      </div>
+    </section>
 
-      <h4>بيانات المركبة</h4>
-      <div class="full"><label class="q">نوع المركبة<span class="req">*</span></label><div class="vehicles" id="a-vehicles"></div></div>
-      <div><label class="q">الماركة والموديل<span class="req">*</span></label><input type="text" name="vehicle_model" required></div>
-      <div><label class="q">سنة الصنع</label><input type="number" name="vehicle_year" min="1970" max="2027"></div>
-      <div><label class="q">الحمولة (طن)<span class="req">*</span></label><input type="number" name="capacity_tons" step="0.1" min="0.1" required></div>
-      <div><label class="q">رقم اللوحة<span class="req">*</span></label><input type="text" name="plate_number" required></div>
-      <div><label class="q">التغطية<span class="req">*</span></label><select name="cover_type" required><option value="">اختر</option><option>مغلقة</option><option>مغطاة بمشمع</option><option>مكشوفة</option></select></div>
-      <div><label class="q">الملكية<span class="req">*</span></label><select name="ownership" required><option value="">اختر</option><option>ملك للسائق</option><option>ملك لشخص آخر</option></select></div>
-      <div><label class="q">صورة المركبة</label><input type="file" name="vehicle_photo" accept="image/*"></div>
-      <div><label class="q">صورة الرخصة</label><input type="file" name="license_photo" accept="image/*"></div>
+    <section class="card">
+      <h3 class="card-title">بيانات السائق</h3>
+      <div class="fields">
+        <div class="field full"><label>الاسم الكامل *</label><input type="text" name="full_name" required></div>
+        <div class="field"><label>الموبايل *</label><input type="tel" name="phone" required placeholder="0912345678"></div>
+        <div class="field"><label>الواتساب</label><input type="tel" name="whatsapp"></div>
+        <div class="field sel"><label>مدينة الإقامة *</label><select name="residence_city" data-cities required><option value=""></option></select></div>
+        <div class="field"><label>المنطقة / الحي *</label><input type="text" name="residence_area" required></div>
+        <div class="field sel"><label>نوع الرخصة *</label><select name="license_type" required><option value=""></option><option>خاصة</option><option>عامة</option><option>نقل ثقيل</option></select></div>
+        <div class="field"><label>سنوات الخبرة</label><input type="number" name="experience_years" min="0"></div>
+      </div>
+    </section>
 
-      <h4>الخط والأجرة</h4>
-      <div><label class="q">الخط من<span class="req">*</span></label><select name="route_from" data-cities required><option value="">اختر</option></select></div>
-      <div><label class="q">الخط إلى<span class="req">*</span></label><select name="route_to" data-cities required><option value="">اختر</option></select></div>
-      <div class="full"><label class="q">خطوط أخرى</label><input type="text" name="other_routes" placeholder="مثلاً: مدني – كسلا، عطبرة – بورتسودان"></div>
-      <div class="full"><label class="q">المدن البيغطيها</label><div class="chips" id="a-cities"></div></div>
-      <div><label class="q">نطاق العمل<span class="req">*</span></label><select name="work_scope" required><option value="">اختر</option><option>داخل المدينة</option><option>بين الولايات</option><option>كلاهما</option></select></div>
-      <div><label class="q">طريقة الأجرة<span class="req">*</span></label><select name="pricing_method" required><option value="">اختر</option><option>بالرحلة</option><option>باليوم</option><option>بالطن</option></select></div>
-      <div><label class="q">السعر التقريبي (جنيه)</label><input type="number" name="approx_price" min="0"></div>
-      <div><label class="q">الأيام المتاحة</label><select name="availability"><option value="">اختر</option><option>كل الأيام</option><option>أيام محددة</option></select></div>
-      <div class="full"><label class="q">ملاحظات الفريق</label><textarea name="admin_notes" rows="2"></textarea></div>
-    </div>
-    <div class="dlg-foot">
-      <span class="msg" id="a-msg"></span>
-      <button type="submit" class="btn btn-primary" id="a-save">حفظ السائق</button>
-    </div>
+    <section class="card">
+      <h3 class="card-title">بيانات المركبة</h3>
+      <p class="sublabel">نوع المركبة *</p>
+      <div class="vehicles" id="a-vehicles"></div>
+      <div class="fields" style="margin-top:18px">
+        <div class="field"><label>الماركة والموديل *</label><input type="text" name="vehicle_model" required></div>
+        <div class="field"><label>سنة الصنع</label><input type="number" name="vehicle_year" min="1970" max="2027"></div>
+        <div class="field"><label>الحمولة (طن) *</label><input type="number" name="capacity_tons" step="0.1" min="0.1" required></div>
+        <div class="field"><label>رقم اللوحة *</label><input type="text" name="plate_number" required></div>
+        <div class="field sel"><label>التغطية *</label><select name="cover_type" required><option value=""></option><option>مغلقة</option><option>مغطاة بمشمع</option><option>مكشوفة</option></select></div>
+        <div class="field sel"><label>الملكية *</label><select name="ownership" required><option value=""></option><option>ملك للسائق</option><option>ملك لشخص آخر</option></select></div>
+        <div class="filebox"><label>صورة المركبة</label><input type="file" name="vehicle_photo" accept="image/*"></div>
+        <div class="filebox"><label>صورة الرخصة</label><input type="file" name="license_photo" accept="image/*"></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h3 class="card-title">الخط والأجرة</h3>
+      <div class="fields">
+        <div class="field sel"><label>الخط من *</label><select name="route_from" data-cities required><option value=""></option></select></div>
+        <div class="field sel"><label>الخط إلى *</label><select name="route_to" data-cities required><option value=""></option></select></div>
+        <div class="field full"><label>خطوط أخرى</label><input type="text" name="other_routes" placeholder="مثلاً: مدني – كسلا، عطبرة – بورتسودان"></div>
+        <div class="full"><p class="sublabel">المدن البيغطيها</p><div class="chips" id="a-cities"></div></div>
+        <div class="field sel"><label>نطاق العمل *</label><select name="work_scope" required><option value=""></option><option>داخل المدينة</option><option>بين الولايات</option><option>كلاهما</option></select></div>
+        <div class="field sel"><label>طريقة الأجرة *</label><select name="pricing_method" required><option value=""></option><option>بالرحلة</option><option>باليوم</option><option>بالطن</option></select></div>
+        <div class="field"><label>السعر التقريبي (جنيه سوداني)</label><input type="number" name="approx_price" min="0"></div>
+        <div class="field sel"><label>الأيام المتاحة</label><select name="availability"><option value=""></option><option>كل الأيام</option><option>أيام محددة</option></select></div>
+        <div class="field full"><label>ملاحظات</label><textarea name="admin_notes"></textarea></div>
+      </div>
+    </section>
   </form>
-</dialog>
+</div>
 
-<div class="viewer" id="viewer" hidden><button class="btn btn-light" id="viewer-close">إغلاق</button><img id="viewer-img" alt=""></div>
+<div class="viewer" id="viewer" hidden><button class="btn btn-ghost" id="viewer-close">إغلاق</button><img id="viewer-img" alt=""></div>
 
 <script>
 const SUPABASE_URL = "https://fisgxnxnllplkghtsgqa.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_sW5skDrm4X5wJBgz4phBWQ_6ICaUp2B";
 const TABLE = "driver_registrations";
 const BUCKET = "driver-docs";
-const REQ_STATUSES = ["جديد", "تم التواصل", "مرفوض"];
-const ALL_STATUSES = ["جديد", "تم التواصل", "مقبول", "مرفوض"];
+const STATUS = {
+  "جديد": { cls: "s-new", color: "#607D8B" },
+  "تم التواصل": { cls: "s-contact", color: "#3F51B5" },
+  "مقبول": { cls: "s-ok", color: "#4CAF50" },
+  "مرفوض": { cls: "s-no", color: "#E91E63" },
+};
+const REQ = ["جديد", "تم التواصل", "مرفوض"];
 
 const $ = id => document.getElementById(id);
 const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
 const norm = s => String(s || "").replace(/[أإآ]/g, "ا").replace(/ة/g, "ه").replace(/ى/g, "ي").replace(/(^|\s)ود\s+/g, "$1").replace(/\s+/g, " ").trim();
+const code = r => r.code ? "D" + (1000 + Number(r.code)) : "D-" + String(r.id).slice(0, 5).toUpperCase();
+const chip = s => `<span class="chip ${(STATUS[s] || STATUS["جديد"]).cls}">${esc(s)}</span>`;
+const fmtDate = d => d ? new Date(d).toLocaleDateString("ar-EG-u-nu-latn", { timeZone: "Africa/Khartoum", day: "numeric", month: "long", year: "numeric" }) : "";
+const fmtTime = d => d ? new Date(d).toLocaleTimeString("ar-EG-u-nu-latn", { timeZone: "Africa/Khartoum", hour: "2-digit", minute: "2-digit" }) : "";
+const money = n => Number(n).toLocaleString("en-US");
+const waNum = p => (p || "").replace(/\D/g, "").replace(/^0/, "249");
+const normPhone = v => String(v || "").replace(/[^\d+]/g, "").replace(/^\+?249/, "0");
+const ICON = {
+  box: '<svg class="i" viewBox="0 0 24 24"><path d="M3 7l9-4 9 4v10l-9 4-9-4zM3 7l9 4 9-4M12 11v10"/></svg>',
+  user: '<svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>',
+  phone: '<svg class="i" viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg>',
+  chart: '<svg class="i" viewBox="0 0 24 24"><path d="M4 20h16M7 16v-5M11 16V8M15 16v-3M19 16V6"/></svg>',
+  clock: '<svg class="i" viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 2h6v4H9zM12 11v4l2 1"/></svg>',
+  truck: '<svg class="i" viewBox="0 0 24 24"><path d="M3 6h11v10H3zM14 9h4l3 3v4h-7"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>',
+  route: '<svg class="i" viewBox="0 0 24 24"><circle cx="6" cy="19" r="2"/><circle cx="18" cy="5" r="2"/><path d="M8 19h8a3 3 0 0 0 0-6H8a3 3 0 0 1 0-6h8"/></svg>',
+  plus: '<svg class="i" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>',
+  dots: '<svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="12" cy="19" r="1.2"/></svg>',
+  search: '<svg class="i" viewBox="0 0 24 24" style="width:20px;height:20px;color:#757575"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>',
+  img: '<svg class="i" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-8 8"/></svg>',
+};
+
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
 let rows = [];
-let tab = "requests";
-let statFilter = "";
-
-// ---------- static UI ----------
-const fill = (sel, opts) => { const v = sel.value; sel.length = 1; opts.forEach(o => sel.add(new Option(o, o))); sel.value = v; };
-fill($("r-from"), CITIES); fill($("r-to"), CITIES); fill($("f-city"), CITIES);
-fill($("r-vehicle"), VEHICLES.filter(x => x.v !== "أخرى").map(x => x.v));
-document.querySelectorAll("#add-form select[data-cities]").forEach(s => fill(s, CITIES));
-$("a-branch").innerHTML = BRANCHES.map(b => `<option>${b}</option>`).join("");
-$("a-vehicles").innerHTML = VEHICLES.map(x => vehicleCard("vehicle_type", x)).join("");
-$("a-cities").innerHTML = CITIES.map(c => `<label class="chip"><input type="checkbox" name="cities" value="${c}"><span>${c}</span></label>`).join("");
+const state = { requests: { q: "", status: "", vehicle: "", page: 0, size: 20 }, approved: { q: "", from: "", to: "", vehicle: "", page: 0, size: 20 } };
 
 // ---------- auth ----------
 async function boot() {
   const { data: { session } } = await sb.auth.getSession();
-  session ? enter(session) : showLogin();
+  session ? enter(session) : ($("login").hidden = false);
 }
-function showLogin() { $("login").hidden = false; $("app").hidden = true; }
 $("login-form").onsubmit = async e => {
   e.preventDefault();
   $("login-btn").disabled = true; $("login-err").textContent = "";
@@ -310,50 +381,131 @@ $("login-form").onsubmit = async e => {
   if (error) { $("login-err").textContent = "البريد أو كلمة المرور غير صحيحة"; return; }
   enter(data.session);
 };
-$("logout").onclick = async () => { await sb.auth.signOut(); location.reload(); };
+$("avatar").onclick = e => { e.stopPropagation(); $("menu").hidden = !$("menu").hidden; };
+document.addEventListener("click", () => $("menu").hidden = true);
+$("logout").onclick = async () => { await sb.auth.signOut(); location.hash = ""; location.reload(); };
+$("menu-btn").onclick = () => { $("drawer").classList.add("open"); $("scrim").hidden = false; };
+$("scrim").onclick = () => { $("drawer").classList.remove("open"); $("scrim").hidden = true; };
+
 async function enter(session) {
-  $("login").hidden = true; $("app").hidden = false;
+  $("login").hidden = true;
   $("who").textContent = session.user.email;
+  $("view").innerHTML = `<div class="card empty">جارٍ تحميل البيانات...</div>`;
+  $("app").hidden = false;
   await load();
+  window.addEventListener("hashchange", route);
+  route();
 }
 
-// ---------- data ----------
 async function load() {
-  $("loading").hidden = false; $("loading").textContent = "جارٍ تحميل البيانات..."; $("grid").innerHTML = ""; $("empty").hidden = true;
   const { data, error } = await sb.from(TABLE).select("*").order("created_at", { ascending: false });
-  if (error) { $("loading").textContent = "تعذّر تحميل البيانات: " + error.message; return; }
+  if (error) { $("view").innerHTML = `<div class="card empty">تعذّر تحميل البيانات: ${esc(error.message)}</div>`; return false; }
   rows = data || [];
   if (!rows.length) {
     const { data: ok } = await sb.rpc("is_admin");
-    if (ok !== true) { $("loading").textContent = "هذا الحساب غير مضاف كموظف. أضف بريده إلى جدول admins في Supabase."; return; }
+    if (ok !== true) { $("view").innerHTML = `<div class="card empty">هذا الحساب غير مضاف كموظف. أضف بريده إلى جدول admins في Supabase.</div>`; return false; }
   }
-  $("loading").hidden = true;
-  fill($("f-vehicle"), [...new Set(rows.map(r => r.vehicle_type).filter(Boolean))]);
-  render();
+  updateNav();
+  return true;
+}
+function updateNav() {
+  $("nav-req").textContent = rows.filter(r => r.status === "جديد").length;
+  $("nav-app").textContent = rows.filter(r => r.status === "مقبول").length;
 }
 
-// ---------- tabs ----------
-document.querySelectorAll(".tab").forEach(t => t.onclick = () => {
-  tab = t.dataset.tab; statFilter = "";
-  document.querySelectorAll(".tab").forEach(x => x.classList.toggle("on", x === t));
-  $("tab-requests").hidden = tab !== "requests";
-  $("tab-approved").hidden = tab !== "approved";
-  $("f-status").parentElement && ($("f-status").hidden = tab === "approved");
-  render();
-});
-fill($("f-status"), REQ_STATUSES);
+// ---------- router ----------
+function route() {
+  const [, page = "dashboard", id] = (location.hash || "#/dashboard").split("/");
+  $("drawer").classList.remove("open"); $("scrim").hidden = true;
+  const isAdd = page === "add";
+  $("app").hidden = isAdd; $("addpage").hidden = !isAdd;
+  document.querySelectorAll("[data-nav]").forEach(a => a.classList.toggle("on", a.dataset.nav === (page === "driver" ? "" : page)));
+  window.scrollTo(0, 0);
+  if (isAdd) return openAdd();
+  ({ dashboard: viewDashboard, requests: () => viewList("requests"), approved: () => viewList("approved"), driver: () => viewDriver(id) }[page] || viewDashboard)();
+}
+const crumb = (title, extra = "") => `<div class="crumb"><a href="#/dashboard">الرئيسية</a><span class="sep">«</span><span>${title}</span><span class="sp"></span>${extra}</div>`;
 
-// ---------- route matching ----------
+// ---------- dashboard ----------
+function donut(parts, total) {
+  const R = 70, C = 2 * Math.PI * R; let off = 0;
+  const segs = parts.filter(p => p.n > 0).map(p => {
+    const len = C * p.n / total, gap = parts.filter(x => x.n > 0).length > 1 ? 4 : 0;
+    const s = `<circle r="${R}" cx="100" cy="100" fill="none" stroke="${p.color}" stroke-width="30" stroke-dasharray="${Math.max(len - gap, 0.1)} ${C}" stroke-dashoffset="${-off}" transform="rotate(-90 100 100)"/>`;
+    off += len; return s;
+  }).join("");
+  return `<svg viewBox="0 0 200 200" width="230" height="230" role="img" aria-label="توزيع السائقين حسب الحالة">
+    ${total ? segs : `<circle r="${R}" cx="100" cy="100" fill="none" stroke="#EEE" stroke-width="30"/>`}
+    <text x="100" y="98" text-anchor="middle" font-size="30" font-weight="600" fill="#212121">${total}</text>
+    <text x="100" y="126" text-anchor="middle" font-size="20" fill="#212121">الإجمالي</text></svg>`;
+}
+function viewDashboard() {
+  const by = s => rows.filter(r => r.status === s).length;
+  const parts = Object.entries(STATUS).map(([s, v]) => ({ s, n: by(s), color: v.color }));
+  const vt = {}; rows.filter(r => r.status === "مقبول").forEach(r => vt[r.vehicle_type] = (vt[r.vehicle_type] || 0) + 1);
+  const routes = {}; rows.filter(r => r.status === "مقبول").forEach(r => { const k = [r.route_from, r.route_to].join(" ← "); routes[k] = (routes[k] || 0) + 1; });
+  const latest = rows.slice(0, 6);
+  $("view").innerHTML = `
+  <div class="dash">
+    <section class="card">
+      <h3 class="card-title">${ICON.chart}إحصائيات السائقين</h3>
+      <div class="donut-wrap">
+        ${donut(parts, rows.length)}
+        <div class="legend">${parts.map(p => `<span><i style="background:${p.color}"></i>${p.s} (${p.n})</span>`).join("")}</div>
+      </div>
+    </section>
+    <div style="display:flex;flex-direction:column;gap:20px">
+      <section class="card">
+        <h3 class="card-title">${ICON.clock}انتظار الموافقة</h3>
+        <div class="list-row link" data-go="#/requests" data-status="جديد">${ICON.user}طلبات جديدة<span class="sp"></span><span class="pill">${by("جديد")}</span></div>
+        <div class="list-row link" data-go="#/requests" data-status="تم التواصل">${ICON.phone}تم التواصل<span class="sp"></span><span class="pill">${by("تم التواصل")}</span></div>
+      </section>
+      <section class="card">
+        <h3 class="card-title">${ICON.truck}المعتمدين حسب المركبة</h3>
+        ${Object.keys(vt).length ? Object.entries(vt).sort((a, b) => b[1] - a[1]).map(([k, n]) => `<div class="list-row">${ICON.box}${esc(k)}<span class="sp"></span><span class="pill">${n}</span></div>`).join("") : `<p class="hint">لا يوجد سائقين معتمدين بعد</p>`}
+      </section>
+    </div>
+  </div>
+  <section class="table-card" style="margin-top:20px">
+    <div class="table-tools"><h3 class="card-title" style="margin:0">${ICON.user}آخر التسجيلات</h3></div>
+    <div class="tscroll">${table(latest, false)}</div>
+  </section>
+  ${Object.keys(routes).length ? `<section class="card"><h3 class="card-title">${ICON.route}الخطوط المغطاة بالمعتمدين</h3>
+    ${Object.entries(routes).sort((a, b) => b[1] - a[1]).map(([k, n]) => `<div class="list-row link" data-route="${esc(k)}">${ICON.route}${esc(k)}<span class="sp"></span><span class="pill">${n}</span></div>`).join("")}</section>` : ""}`;
+  $("view").querySelectorAll("[data-go]").forEach(el => el.onclick = () => { state.requests.status = el.dataset.status; state.requests.page = 0; location.hash = el.dataset.go; });
+  $("view").querySelectorAll("[data-route]").forEach(el => el.onclick = () => { const [f, t] = el.dataset.route.split(" ← "); Object.assign(state.approved, { from: f, to: t, page: 0 }); location.hash = "#/approved"; });
+  bindRows();
+}
+
+// ---------- tables ----------
+function table(list, withMatch) {
+  if (!list.length) return `<div class="empty">لا توجد نتائج</div>`;
+  return `<table><thead><tr>
+    <th>الكود</th><th>التاريخ</th><th>السائق</th><th>المركبة</th><th>الخط</th><th>الحالة</th>${withMatch ? "<th>المطابقة</th>" : ""}
+  </tr></thead><tbody>${list.map(x => {
+    const r = x.r || x, m = x.m;
+    return `<tr data-id="${r.id}">
+      <td><span class="code">${code(r)}</span></td>
+      <td>${fmtDate(r.created_at)}<span class="sub">${fmtTime(r.created_at)}</span></td>
+      <td>${esc(r.full_name)}<span class="sub" dir="ltr" style="text-align:right">${esc(r.phone)}</span></td>
+      <td>${esc(r.vehicle_type)}<span class="sub">${esc(r.capacity_tons)} طن · ${esc(r.cover_type)}</span></td>
+      <td class="route">${esc(r.route_from)}<b>←</b>${esc(r.route_to)}</td>
+      <td>${chip(r.status)}</td>
+      ${withMatch ? `<td>${m && m.label ? `<span class="chip match">${esc(m.label)}</span>` : "—"}</td>` : ""}
+    </tr>`;
+  }).join("")}</tbody></table>`;
+}
+function bindRows() { $("view").querySelectorAll("tbody tr[data-id]").forEach(tr => tr.onclick = () => location.hash = "#/driver/" + tr.dataset.id); }
+
 function routeMatch(r, from, to) {
   if (!from && !to) return { score: 1, label: "" };
-  const f = norm(from), t = norm(to);
-  const rf = norm(r.route_from), rt = norm(r.route_to);
+  const f = norm(from), t = norm(to), rf = norm(r.route_from), rt = norm(r.route_to);
   const other = norm(r.other_routes);
   const segs = String(r.other_routes || "").split(/[،,؛;\n\/]|\sو\s/).map(norm).filter(Boolean);
   const covered = new Set([rf, rt, norm(r.residence_city), ...(r.cities || []).map(norm)]);
   if (f && t) {
     if ((rf === f && rt === t) || (rf === t && rt === f)) return { score: 3, label: "نفس الخط" };
-    if (segs.some(sg => sg.includes(f) && sg.includes(t))) return { score: 2, label: "خط إضافي" };
+    if (segs.some(s => s.includes(f) && s.includes(t))) return { score: 2, label: "خط إضافي" };
     if ((covered.has(f) || other.includes(f)) && (covered.has(t) || other.includes(t))) return { score: 1, label: "يغطي المدينتين" };
     return { score: 0 };
   }
@@ -364,150 +516,190 @@ function routeMatch(r, from, to) {
   return { score: 0 };
 }
 
-function listFor() {
-  const q = $("q").value.trim().toLowerCase();
-  const vt = $("f-vehicle").value;
-  const city = $("f-city").value;
-  const base = rows.filter(r => (tab === "approved") === (r.status === "مقبول"));
-  let list = base.filter(r =>
-    (tab === "approved" || !($("f-status").value || statFilter) || r.status === ($("f-status").value || statFilter)) &&
-    (!vt || r.vehicle_type === vt) &&
-    (!city || [r.residence_city, r.route_from, r.route_to, ...(r.cities || [])].includes(city)) &&
-    (!q || [r.full_name, r.phone, r.whatsapp, r.plate_number, r.vehicle_model].some(v => (v || "").toLowerCase().includes(q)))
-  );
-  if (tab === "approved") {
-    const from = $("r-from").value, to = $("r-to").value, rv = $("r-vehicle").value;
-    list = list.filter(r => !rv || r.vehicle_type === rv)
-      .map(r => ({ r, m: routeMatch(r, from, to) }))
-      .filter(x => x.m.score > 0)
-      .sort((a, b) => b.m.score - a.m.score);
-    return { base, list };
+function filtered(kind) {
+  const s = state[kind];
+  const q = s.q.trim().toLowerCase();
+  let list = rows.filter(r => (kind === "approved") === (r.status === "مقبول"))
+    .filter(r => !s.vehicle || r.vehicle_type === s.vehicle)
+    .filter(r => !q || [r.full_name, r.phone, r.whatsapp, r.plate_number, code(r)].some(v => String(v || "").toLowerCase().includes(q)));
+  if (kind === "requests") return list.filter(r => !s.status || r.status === s.status).map(r => ({ r }));
+  return list.map(r => ({ r, m: routeMatch(r, s.from, s.to) })).filter(x => x.m.score > 0).sort((a, b) => b.m.score - a.m.score);
+}
+
+const opts = (arr, sel, first) => `<option value="">${first}</option>` + arr.map(v => `<option ${v === sel ? "selected" : ""}>${esc(v)}</option>`).join("");
+
+function viewList(kind) {
+  const s = state[kind];
+  const isApp = kind === "approved";
+  const vehicles = [...new Set([...VEHICLES.map(v => v.v), ...rows.map(r => r.vehicle_type)].filter(Boolean))];
+  $("view").innerHTML = `
+    ${crumb(isApp ? "السائقين المعتمدين" : "طلبات الانضمام", `<button class="icon-btn" style="color:#616161" id="export" title="تصدير Excel" aria-label="تصدير">${ICON.dots}</button>`)}
+    ${isApp ? `<section class="card">
+      <h3 class="card-title">${ICON.route}ابحث عن سائق لخط معيّن</h3>
+      <div class="finder">
+        <div class="field sel"><label>من</label><select id="r-from">${opts(CITIES, s.from, "أي مدينة")}</select></div>
+        <button class="swap" id="r-swap" aria-label="عكس الاتجاه">⇄</button>
+        <div class="field sel"><label>إلى</label><select id="r-to">${opts(CITIES, s.to, "أي مدينة")}</select></div>
+        <div class="field sel"><label>نوع المركبة</label><select id="r-vehicle">${opts(vehicles, s.vehicle, "الكل")}</select></div>
+        <button class="btn btn-ghost" id="r-clear">مسح</button>
+      </div>
+      <p class="hint">الترتيب: نفس الخط أولاً، بعده الخط الإضافي، بعده السائقين البيغطوا المدينتين.</p>
+    </section>` : ""}
+    <div style="display:flex;justify-content:flex-start;margin:0 0 14px"><a class="fab" href="#/add" aria-label="إضافة سائق" title="إضافة سائق">${ICON.plus}</a></div>
+    <section class="table-card">
+      <div class="table-tools">
+        <div class="search">${ICON.search}<input id="q" placeholder="بحث بالاسم أو الموبايل أو اللوحة أو الكود" value="${esc(s.q)}"></div>
+        ${isApp ? "" : `<select id="f-status">${opts(REQ, s.status, "كل الحالات")}</select><select id="f-vehicle">${opts(vehicles, s.vehicle, "كل المركبات")}</select>`}
+      </div>
+      <div class="tscroll" id="tbl"></div>
+      <div class="paginator" id="pg"></div>
+    </section>`;
+  const draw = () => {
+    const list = filtered(kind);
+    const pages = Math.max(1, Math.ceil(list.length / s.size));
+    s.page = Math.min(s.page, pages - 1);
+    const slice = list.slice(s.page * s.size, (s.page + 1) * s.size);
+    $("tbl").innerHTML = table(slice, isApp && (s.from || s.to));
+    if (isApp && (s.from || s.to) && !list.length) $("tbl").innerHTML = `<div class="empty">ما في سائق معتمد على الخط ده حالياً</div>`;
+    const a = list.length ? s.page * s.size + 1 : 0, b = Math.min(list.length, (s.page + 1) * s.size);
+    $("pg").innerHTML = `
+      <span class="sz"><select id="pg-size">${[10, 20, 50, 100].map(n => `<option ${n === s.size ? "selected" : ""}>${n}</option>`).join("")}</select></span>
+      <span>${a}-${b} من ${list.length}</span>
+      <button data-p="first" ${s.page === 0 ? "disabled" : ""} aria-label="الأولى">⇥</button>
+      <button data-p="prev" ${s.page === 0 ? "disabled" : ""} aria-label="السابقة">›</button>
+      <button data-p="next" ${s.page >= pages - 1 ? "disabled" : ""} aria-label="التالية">‹</button>
+      <button data-p="last" ${s.page >= pages - 1 ? "disabled" : ""} aria-label="الأخيرة">⇤</button>`;
+    $("pg-size").onchange = e => { s.size = +e.target.value; s.page = 0; draw(); };
+    $("pg").querySelectorAll("[data-p]").forEach(btn => btn.onclick = () => {
+      s.page = { first: 0, prev: s.page - 1, next: s.page + 1, last: pages - 1 }[btn.dataset.p]; draw();
+    });
+    bindRows();
+    $("export").onclick = () => exportCsv(list.map(x => x.r), isApp ? "سائقين-معتمدين" : "طلبات-انضمام");
+  };
+  $("q").oninput = e => { s.q = e.target.value; s.page = 0; draw(); };
+  if (isApp) {
+    $("r-from").onchange = e => { s.from = e.target.value; s.page = 0; draw(); };
+    $("r-to").onchange = e => { s.to = e.target.value; s.page = 0; draw(); };
+    $("r-vehicle").onchange = e => { s.vehicle = e.target.value; s.page = 0; draw(); };
+    $("r-swap").onclick = () => { [s.from, s.to] = [s.to, s.from]; $("r-from").value = s.from; $("r-to").value = s.to; draw(); };
+    $("r-clear").onclick = () => { s.from = s.to = s.vehicle = ""; viewList(kind); };
+  } else {
+    $("f-status").onchange = e => { s.status = e.target.value; s.page = 0; draw(); };
+    $("f-vehicle").onchange = e => { s.vehicle = e.target.value; s.page = 0; draw(); };
   }
-  return { base, list: list.map(r => ({ r, m: { score: 1, label: "" } })) };
+  draw();
 }
 
-function renderStats() {
-  const req = rows.filter(r => r.status !== "مقبول");
-  const items = [["", "كل الطلبات", req.length], ...REQ_STATUSES.map(s => [s, s, req.filter(r => r.status === s).length])];
-  $("stats").innerHTML = items.map(([k, label, n]) =>
-    `<button class="stat ${statFilter === k && !$("f-status").value ? "on" : ""}" data-k="${esc(k)}"><b>${n}</b><span>${esc(label)}</span></button>`).join("");
-  $("stats").querySelectorAll(".stat").forEach(el => el.onclick = () => { statFilter = el.dataset.k; $("f-status").value = ""; render(); });
-  $("n-req").textContent = req.filter(r => r.status === "جديد").length || req.length;
-  $("n-app").textContent = rows.filter(r => r.status === "مقبول").length;
-}
-
-const fmtDate = d => d ? new Date(d).toLocaleString("ar-EG", { timeZone: "Africa/Khartoum", day: "numeric", month: "short", hour: "numeric", minute: "2-digit" }) : "";
-const waNum = p => (p || "").replace(/\D/g, "").replace(/^0/, "249");
-
-function card({ r, m }) {
+// ---------- driver detail ----------
+function viewDriver(id) {
+  const r = rows.find(x => String(x.id) === String(id));
+  if (!r) { $("view").innerHTML = crumb("سائق") + `<div class="card empty">السائق غير موجود</div>`; return; }
   const approved = r.status === "مقبول";
-  const photos = [
-    r.vehicle_photo_path ? `<button class="btn btn-light btn-sm" data-photo="${esc(r.vehicle_photo_path)}">صورة المركبة</button>` : "",
-    r.license_photo_path ? `<button class="btn btn-light btn-sm" data-photo="${esc(r.license_photo_path)}">صورة الرخصة</button>` : "",
-  ].join("") || `<span class="nophoto">لم تُرفع صور</span>`;
-  const cities = (r.cities || []).map(c => `<span class="tag">${esc(c)}</span>`).join("");
-  const decide = approved ? "" : `
-      <button class="btn btn-ok btn-sm" data-set="مقبول">قبول واعتماد</button>
-      ${r.status !== "مرفوض" ? `<button class="btn btn-no btn-sm" data-set="مرفوض">رفض</button>` : ""}`;
-  return `
-  <article class="card" data-id="${r.id}">
-    <div class="card-head">
-      <div class="vicon"><svg viewBox="0 0 64 32">${vehicleIcon(r.vehicle_type)}</svg></div>
-      <div>
-        <h3>${esc(r.full_name)}</h3>
-        <div class="sub">${esc(r.vehicle_type)} · ${esc(r.capacity_tons)} طن · ${esc(r.cover_type)}</div>
+  const back = approved ? ["#/approved", "السائقين المعتمدين"] : ["#/requests", "طلبات الانضمام"];
+  const kv = pairs => `<div class="kv">${pairs.filter(p => p[1] !== null && p[1] !== undefined && p[1] !== "").map(([k, v]) => `<div>${k}</div><div>${v}</div>`).join("")}</div>`;
+  $("view").innerHTML = `
+    <div class="crumb"><a href="#/dashboard">الرئيسية</a><span class="sep">«</span><a href="${back[0]}">${back[1]}</a><span class="sep">«</span><span dir="ltr">${code(r)}</span></div>
+    <section class="card">
+      <div class="detail-head">
+        <div class="vic"><svg viewBox="0 0 64 32">${vehicleIcon(r.vehicle_type)}</svg></div>
+        <div style="flex:1;min-width:200px">
+          <h2>${esc(r.full_name)}</h2>
+          <div><span class="code">${code(r)}</span> · ${esc(r.vehicle_type)} · ${esc(r.route_from)} ← ${esc(r.route_to)}</div>
+        </div>
+        ${chip(r.status)}
       </div>
-      <div class="badges">
-        ${m.label ? `<span class="badge match">${esc(m.label)}</span>` : `<span class="badge" data-s="${esc(r.status)}">${esc(r.status)}</span>`}
-        ${r.source === "manual" ? `<span class="badge manual">أُضيف يدوياً${r.branch ? " · " + esc(r.branch) : ""}</span>` : ""}
+      <div class="actions" style="margin-top:18px">
+        <a class="btn btn-tonal" href="tel:${esc(r.phone)}">${ICON.phone}اتصال</a>
+        <a class="btn btn-wa" href="https://wa.me/${waNum(r.whatsapp || r.phone)}" target="_blank" rel="noopener">واتساب</a>
+        ${r.vehicle_photo_path ? `<button class="btn btn-ghost" data-photo="${esc(r.vehicle_photo_path)}">${ICON.img}صورة المركبة</button>` : ""}
+        ${r.license_photo_path ? `<button class="btn btn-ghost" data-photo="${esc(r.license_photo_path)}">${ICON.img}صورة الرخصة</button>` : ""}
+        ${!r.vehicle_photo_path && !r.license_photo_path ? `<span class="hint" style="margin:8px 0 0">لم تُرفع صور</span>` : ""}
       </div>
-    </div>
-    <div class="route">${esc(r.route_from)} <span class="arrow">←</span> ${esc(r.route_to)}<small>${esc(r.work_scope)}</small></div>
-    <dl>
-      <dt>الهاتف</dt><dd dir="ltr" style="text-align:right">${esc(r.phone)}${r.whatsapp && r.whatsapp !== r.phone ? " · واتساب " + esc(r.whatsapp) : ""}</dd>
-      <dt>الإقامة</dt><dd>${esc(r.residence_city)} – ${esc(r.residence_area)}</dd>
-      <dt>المركبة</dt><dd>${esc(r.vehicle_model)}${r.vehicle_year ? " · " + esc(r.vehicle_year) : ""} · لوحة ${esc(r.plate_number)}</dd>
-      <dt>الملكية</dt><dd>${esc(r.ownership)}</dd>
-      <dt>الرخصة</dt><dd>${esc(r.license_type)}${r.experience_years != null ? " · خبرة " + esc(r.experience_years) + " سنة" : ""}</dd>
-      <dt>الأجرة</dt><dd>${esc(r.pricing_method)} · ${r.approx_price ? "حوالي " + Number(r.approx_price).toLocaleString("ar-EG") + " جنيه" : "السعر غير محدد"}</dd>
-      ${r.other_routes ? `<dt>خطوط أخرى</dt><dd>${esc(r.other_routes)}</dd>` : ""}
-      ${r.availability ? `<dt>الأيام</dt><dd>${esc(r.availability)}</dd>` : ""}
-    </dl>
-    ${cities ? `<div class="tags">${cities}</div>` : ""}
-    ${r.notes ? `<div class="note">ملاحظة السائق: ${esc(r.notes)}</div>` : ""}
-    <div class="meta">${approved && r.approved_at ? "اعتُمد " + fmtDate(r.approved_at) + (r.approved_by ? " بواسطة " + esc(r.approved_by) : "") : "سُجّل " + fmtDate(r.created_at) + (r.added_by ? " بواسطة " + esc(r.added_by) : "")}</div>
-    <div class="actions">
-      <a class="btn btn-call btn-sm" href="tel:${esc(r.phone)}">اتصال</a>
-      <a class="btn btn-wa btn-sm" href="https://wa.me/${waNum(r.whatsapp || r.phone)}" target="_blank" rel="noopener">واتساب</a>
-      ${photos}
-    </div>
-    <div class="admin-row">
-      ${decide}
-      <select data-status aria-label="الحالة">${ALL_STATUSES.map(s => `<option ${s === r.status ? "selected" : ""}>${s}</option>`).join("")}</select>
-      <textarea data-notes placeholder="ملاحظات الفريق">${esc(r.admin_notes)}</textarea>
-      <span class="saved" hidden>تم الحفظ</span>
-    </div>
-  </article>`;
-}
+    </section>
 
-function render() {
-  renderStats();
-  const { base, list } = listFor();
-  $("count").textContent = tab === "approved"
-    ? `${list.length} سائق معتمد مطابق من ${base.length}`
-    : `${list.length} من ${base.length} طلب`;
-  $("grid").innerHTML = list.map(card).join("");
-  $("empty").hidden = list.length > 0;
-  $("empty").textContent = tab === "approved" && ($("r-from").value || $("r-to").value)
-    ? "ما في سائق معتمد على الخط ده حالياً" : "لا توجد نتائج";
-}
+    <section class="card">
+      <h3 class="card-title">${ICON.clock}القرار</h3>
+      <div class="decision">
+        ${approved ? "" : `<button class="btn btn-ok" data-set="مقبول">قبول واعتماد</button>${r.status !== "مرفوض" ? `<button class="btn btn-no" data-set="مرفوض">رفض</button>` : ""}`}
+        <div class="field sel" style="min-width:200px"><label>الحالة</label><select id="d-status">${Object.keys(STATUS).map(s => `<option ${s === r.status ? "selected" : ""}>${s}</option>`).join("")}</select></div>
+        <span class="saved" id="d-saved" hidden>تم الحفظ</span>
+      </div>
+      <div class="field" style="margin-top:16px"><label>ملاحظات الفريق</label><textarea id="d-notes">${esc(r.admin_notes)}</textarea></div>
+      <p class="hint">${approved && r.approved_at ? `اعتُمد ${fmtDate(r.approved_at)} ${fmtTime(r.approved_at)}${r.approved_by ? " بواسطة " + esc(r.approved_by) : ""} · ` : ""}سُجّل ${fmtDate(r.created_at)} ${fmtTime(r.created_at)}${r.source === "manual" ? ` · أُضيف يدوياً${r.branch ? " من فرع " + esc(r.branch) : ""}${r.added_by ? " بواسطة " + esc(r.added_by) : ""}` : " · من فورم التسجيل"}</p>
+    </section>
 
-// ---------- updates ----------
-async function save(id, patch, cardEl) {
-  const { data, error } = await sb.from(TABLE).update(patch).eq("id", id).select().single();
-  if (error) { alert("تعذّر الحفظ: " + error.message); return false; }
-  Object.assign(rows.find(r => r.id === id), data || patch);
-  const s = cardEl?.querySelector(".saved"); if (s) { s.hidden = false; setTimeout(() => s.hidden = true, 1500); }
-  return true;
+    <div class="grid2">
+      <section class="card"><h3 class="card-title">${ICON.user}بيانات السائق</h3>${kv([
+        ["الموبايل", `<span dir="ltr">${esc(r.phone)}</span>`],
+        ["الواتساب", r.whatsapp ? `<span dir="ltr">${esc(r.whatsapp)}</span>` : null],
+        ["الإقامة", `${esc(r.residence_city)} – ${esc(r.residence_area)}`],
+        ["الرخصة", esc(r.license_type)],
+        ["الخبرة", r.experience_years != null ? esc(r.experience_years) + " سنة" : null],
+      ])}</section>
+      <section class="card"><h3 class="card-title">${ICON.truck}بيانات المركبة</h3>${kv([
+        ["النوع", esc(r.vehicle_type)],
+        ["الماركة والموديل", esc(r.vehicle_model) + (r.vehicle_year ? " · " + esc(r.vehicle_year) : "")],
+        ["الحمولة", esc(r.capacity_tons) + " طن"],
+        ["التغطية", esc(r.cover_type)],
+        ["رقم اللوحة", esc(r.plate_number)],
+        ["الملكية", esc(r.ownership)],
+      ])}</section>
+    </div>
+    <section class="card" style="margin-top:20px"><h3 class="card-title">${ICON.route}الخط والأجرة</h3>${kv([
+      ["الخط الأساسي", `${esc(r.route_from)} ← ${esc(r.route_to)}`],
+      ["خطوط أخرى", r.other_routes ? esc(r.other_routes) : null],
+      ["المدن", (r.cities || []).length ? r.cities.map(esc).join("، ") : null],
+      ["نطاق العمل", esc(r.work_scope)],
+      ["طريقة الأجرة", esc(r.pricing_method)],
+      ["السعر التقريبي", r.approx_price ? money(r.approx_price) + " جنيه سوداني" : "غير محدد"],
+      ["الأيام", r.availability ? esc(r.availability) : null],
+      ["عمل مع شركات", r.worked_with_companies ? esc(r.worked_with_companies) : null],
+      ["ملاحظة السائق", r.notes ? esc(r.notes) : null],
+    ])}</section>`;
+
+  const flash = () => { $("d-saved").hidden = false; setTimeout(() => $("d-saved") && ($("d-saved").hidden = true), 1500); };
+  $("view").querySelectorAll("[data-set]").forEach(b => b.onclick = async () => {
+    if (b.dataset.set === "مرفوض" && !confirm("رفض هذا الطلب؟")) return;
+    b.disabled = true;
+    if (await save(r.id, { status: b.dataset.set })) viewDriver(r.id); else b.disabled = false;
+  });
+  $("d-status").onchange = async e => { if (await save(r.id, { status: e.target.value })) viewDriver(r.id); };
+  $("d-notes").onchange = async e => { if (await save(r.id, { admin_notes: e.target.value.trim() || null })) flash(); };
+  $("view").querySelectorAll("[data-photo]").forEach(b => b.onclick = async () => {
+    b.disabled = true;
+    const { data, error } = await sb.storage.from(BUCKET).createSignedUrl(b.dataset.photo, 600);
+    b.disabled = false;
+    if (error) return alert("تعذّر فتح الصورة");
+    $("viewer-img").src = data.signedUrl; $("viewer").hidden = false;
+  });
 }
-$("grid").addEventListener("change", async e => {
-  const cardEl = e.target.closest(".card"); if (!cardEl) return;
-  const id = cardEl.dataset.id;
-  if (e.target.matches("[data-status]") && await save(id, { status: e.target.value }, cardEl)) render();
-  if (e.target.matches("[data-notes]")) save(id, { admin_notes: e.target.value.trim() || null }, cardEl);
-});
-$("grid").addEventListener("click", async e => {
-  const set = e.target.closest("[data-set]");
-  if (set) {
-    const cardEl = set.closest(".card");
-    if (set.dataset.set === "مرفوض" && !confirm("رفض هذا الطلب؟")) return;
-    set.disabled = true;
-    if (await save(cardEl.dataset.id, { status: set.dataset.set }, cardEl)) render();
-    else set.disabled = false;
-    return;
-  }
-  const btn = e.target.closest("[data-photo]"); if (!btn) return;
-  btn.disabled = true;
-  const { data, error } = await sb.storage.from(BUCKET).createSignedUrl(btn.dataset.photo, 600);
-  btn.disabled = false;
-  if (error) { alert("تعذّر فتح الصورة"); return; }
-  $("viewer-img").src = data.signedUrl; $("viewer").hidden = false;
-});
 $("viewer-close").onclick = () => { $("viewer").hidden = true; $("viewer-img").src = ""; };
 $("viewer").onclick = e => { if (e.target.id === "viewer") $("viewer-close").onclick(); };
 
-["q", "f-status", "f-vehicle", "f-city", "r-from", "r-to", "r-vehicle"].forEach(id =>
-  $(id).addEventListener("input", () => { if (id === "f-status") statFilter = ""; render(); }));
-$("r-swap").onclick = () => { const a = $("r-from").value; $("r-from").value = $("r-to").value; $("r-to").value = a; render(); };
-$("r-clear").onclick = () => { $("r-from").value = $("r-to").value = $("r-vehicle").value = ""; render(); };
-$("refresh").onclick = load;
+async function save(id, patch) {
+  const { data, error } = await sb.from(TABLE).update(patch).eq("id", id).select().single();
+  if (error) { alert("تعذّر الحفظ: " + error.message); return false; }
+  Object.assign(rows.find(r => r.id === id), data || patch);
+  updateNav();
+  return true;
+}
 
 // ---------- add driver ----------
-const dlg = $("dlg");
-$("add-btn").onclick = () => { $("add-form").reset(); $("a-msg").textContent = ""; dlg.showModal(); };
-$("dlg-close").onclick = () => dlg.close();
-const normPhone = v => v.replace(/[^\d+]/g, "").replace(/^\+?249/, "0");
-
+const fillSel = (sel, arr) => arr.forEach(v => sel.add(new Option(v, v)));
+document.querySelectorAll("#add-form select[data-cities]").forEach(s => fillSel(s, CITIES));
+$("a-branch").innerHTML = BRANCHES.map(b => `<option>${b}</option>`).join("");
+$("a-vehicles").innerHTML = VEHICLES.map(x => vehicleCard("vehicle_type", x)).join("");
+$("a-cities").innerHTML = CITIES.map(c => `<label class="ck"><input type="checkbox" name="cities" value="${c}"><span>${c}</span></label>`).join("");
+function openAdd() {
+  $("add-form").reset(); $("a-msg").textContent = "";
+  document.querySelectorAll("#add-form .inv").forEach(f => f.classList.remove("inv"));
+  $("savegrp").classList.remove("ready");
+}
+$("add-form").addEventListener("input", () => {
+  const f = $("add-form");
+  const ok = [...f.querySelectorAll("[required]")].every(el => el.value.trim()) && new FormData(f).get("vehicle_type");
+  $("savegrp").classList.toggle("ready", !!ok);
+});
 async function uploadDoc(file, folder) {
   if (!file || !file.size) return null;
   const ext = (file.name.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
@@ -516,65 +708,59 @@ async function uploadDoc(file, folder) {
   if (error) throw new Error("تعذّر رفع الصورة: " + error.message);
   return path;
 }
-
 $("add-form").addEventListener("submit", async e => {
   e.preventDefault();
   const f = e.target, fd = new FormData(f);
+  f.querySelectorAll(".inv").forEach(x => x.classList.remove("inv"));
   const missing = [...f.querySelectorAll("[required]")].filter(el => !el.value.trim());
-  if (!fd.get("vehicle_type")) { $("a-msg").textContent = "اختر نوع المركبة"; return; }
+  missing.forEach(el => el.closest(".field")?.classList.add("inv"));
+  if (!fd.get("vehicle_type")) { $("a-msg").textContent = "اختر نوع المركبة"; window.scrollTo({ top: 0, behavior: "smooth" }); return; }
   if (missing.length) { $("a-msg").textContent = "عبّي كل الحقول المطلوبة (*)"; missing[0].focus(); return; }
-  if (!/^0\d{9}$/.test(normPhone(fd.get("phone")))) { $("a-msg").textContent = "رقم الهاتف لازم يكون 10 أرقام يبدأ بـ 0"; return; }
+  if (!/^0\d{9}$/.test(normPhone(fd.get("phone")))) { $("a-msg").textContent = "رقم الموبايل لازم يكون 10 أرقام يبدأ بـ 0"; return; }
   $("a-save").disabled = true; $("a-msg").textContent = "";
   const txt = k => (fd.get(k) || "").toString().trim() || null;
   const num = k => fd.get(k) ? Number(fd.get(k)) : null;
   try {
     const [vehicle_photo_path, license_photo_path] = await Promise.all([
-      uploadDoc(fd.get("vehicle_photo"), "manual/vehicles"),
-      uploadDoc(fd.get("license_photo"), "manual/licenses"),
-    ]);
+      uploadDoc(fd.get("vehicle_photo"), "manual/vehicles"), uploadDoc(fd.get("license_photo"), "manual/licenses")]);
     const row = {
-      status: txt("status"), branch: txt("branch"),
-      full_name: txt("full_name"), phone: normPhone(fd.get("phone")),
+      status: txt("status"), branch: txt("branch"), full_name: txt("full_name"), phone: normPhone(fd.get("phone")),
       whatsapp: txt("whatsapp") ? normPhone(fd.get("whatsapp")) : null,
       residence_city: txt("residence_city"), residence_area: txt("residence_area"),
       license_type: txt("license_type"), experience_years: num("experience_years"),
       vehicle_type: txt("vehicle_type"), vehicle_model: txt("vehicle_model"), vehicle_year: num("vehicle_year"),
       capacity_tons: num("capacity_tons"), cover_type: txt("cover_type"), plate_number: txt("plate_number"),
-      ownership: txt("ownership"), work_scope: txt("work_scope"),
-      route_from: txt("route_from"), route_to: txt("route_to"), other_routes: txt("other_routes"),
-      cities: fd.getAll("cities"), availability: txt("availability"),
-      pricing_method: txt("pricing_method"), approx_price: num("approx_price"),
-      admin_notes: txt("admin_notes"), vehicle_photo_path, license_photo_path,
+      ownership: txt("ownership"), work_scope: txt("work_scope"), route_from: txt("route_from"), route_to: txt("route_to"),
+      other_routes: txt("other_routes"), cities: fd.getAll("cities"), availability: txt("availability"),
+      pricing_method: txt("pricing_method"), approx_price: num("approx_price"), admin_notes: txt("admin_notes"),
+      vehicle_photo_path, license_photo_path,
     };
     const { data, error } = await sb.from(TABLE).insert(row).select().single();
     if (error) throw error;
-    rows.unshift(data);
-    dlg.close();
-    if (data.status === "مقبول" && tab !== "approved") document.querySelector('[data-tab="approved"]').click(); else render();
+    rows.unshift(data); updateNav();
+    location.hash = "#/driver/" + data.id;
   } catch (err) {
     $("a-msg").textContent = "تعذّر الحفظ: " + (err.message || err);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   } finally { $("a-save").disabled = false; }
 });
 
 // ---------- export ----------
-$("export").onclick = () => {
-  const cols = [
-    ["created_at","تاريخ التسجيل"],["status","الحالة"],["full_name","الاسم"],["phone","الهاتف"],["whatsapp","واتساب"],
-    ["residence_city","مدينة الإقامة"],["residence_area","الحي"],["license_type","الرخصة"],["experience_years","سنوات الخبرة"],
+function exportCsv(data, name) {
+  const cols = [["code","الكود"],["created_at","تاريخ التسجيل"],["status","الحالة"],["full_name","الاسم"],["phone","الموبايل"],["whatsapp","واتساب"],
+    ["residence_city","مدينة الإقامة"],["residence_area","الحي"],["license_type","الرخصة"],["experience_years","الخبرة"],
     ["vehicle_type","نوع المركبة"],["vehicle_model","الموديل"],["vehicle_year","سنة الصنع"],["capacity_tons","الحمولة (طن)"],
     ["cover_type","التغطية"],["plate_number","اللوحة"],["ownership","الملكية"],["work_scope","نطاق العمل"],
     ["route_from","الخط من"],["route_to","الخط إلى"],["other_routes","خطوط أخرى"],["cities","المدن"],["availability","الأيام"],
     ["pricing_method","طريقة الأجرة"],["approx_price","السعر التقريبي"],["notes","ملاحظات السائق"],["admin_notes","ملاحظات الفريق"],
-    ["source","المصدر"],["branch","الفرع"],["added_by","أضافه"],["approved_at","تاريخ الاعتماد"],
-  ];
+    ["source","المصدر"],["branch","الفرع"],["added_by","أضافه"],["approved_at","تاريخ الاعتماد"]];
   const cell = v => { v = Array.isArray(v) ? v.join("، ") : (v ?? ""); return `"${String(v).replace(/"/g, '""')}"`; };
-  const data = listFor().list.map(x => x.r);
-  const csv = [cols.map(c => cell(c[1])).join(","), ...data.map(r => cols.map(([k]) => cell(/_at$/.test(k) ? fmtDate(r[k]) : r[k])).join(","))].join("\r\n");
+  const val = (r, k) => k === "code" ? code(r) : /_at$/.test(k) ? (r[k] ? fmtDate(r[k]) + " " + fmtTime(r[k]) : "") : r[k];
+  const csv = [cols.map(c => cell(c[1])).join(","), ...data.map(r => cols.map(([k]) => cell(val(r, k))).join(","))].join("\r\n");
   const a = document.createElement("a");
   a.href = URL.createObjectURL(new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8" }));
-  a.download = `${tab === "approved" ? "سواقين-معتمدين" : "طلبات-انضمام"}-${new Date().toISOString().slice(0, 10)}.csv`;
-  a.click();
-};
+  a.download = `${name}-${new Date().toISOString().slice(0, 10)}.csv`; a.click();
+}
 
 boot();
 </script>
