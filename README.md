@@ -39,3 +39,7 @@
 2. Supabase → **Authentication → Users → Add user → Create new user**: اكتب نفس الإيميل وكلمة سر، وفعّل **Auto Confirm User**.
 3. Supabase → **Authentication → Sign In / Providers**: أوقف **Allow new users to sign up**، عشان ما في زول يقدر يسجّل بنفسه.
 4. افتح `https://<رابط الموقع>/admin` وادخل بالإيميل وكلمة السر.
+
+## تحديث اللوحة: المعتمدين + الإضافة اليدوية
+1. شغّل `admin2.sql` في SQL Editor.
+2. لكل موظف فرع: أضف إيميله في جدول `admins`، وأنشئ له حساب في Authentication → Users.
